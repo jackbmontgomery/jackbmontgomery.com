@@ -11,12 +11,14 @@ title = "Jack Montgomery"
     avatarAltText = "avatar"
     avatarSize = "size-m"
 
+    newPage = true
+
     description = "Sky above, sand below and peace within"
 
     socialIcons = [
-    {name = "linkedin", url = "https://example.com"},
-    {name="github", url="https://example.com"},
-    {name="email", url="https://example.com"},
+    {name = "linkedin", url = "www.linkedin.com/in/jack-b-montgomery"},
+    {name="github", url="https://github.com/jackbmontgomery"},
+    {name="email", url="mailto:mail@jackbmontgomery.com"},
   ]
 
 [menu]
@@ -29,3 +31,10 @@ title = "Jack Montgomery"
     name = "Tags"
     url = "/tags/"
     weight = 2
+
+  [[menu.main]]
+    name = "CV"
+    url = "pdfs/CV.pdf"
+    weight = 3
+    [menu.main.params]
+      newPage = true

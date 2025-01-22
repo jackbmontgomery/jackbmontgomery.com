@@ -2,24 +2,24 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Jack Montgomery</title>
-    <link>https://jackbmontgomery.com/</link>
+    <link>http://localhost:1313/</link>
     <description>Recent content on Jack Montgomery</description>
     <generator>Hugo</generator>
     <language>en</language>
     <lastBuildDate>Wed, 22 Jan 2025 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://jackbmontgomery.com/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>About</title>
-      <link>https://jackbmontgomery.com/posts/about/</link>
+      <link>http://localhost:1313/posts/about/</link>
       <pubDate>Wed, 22 Jan 2025 10:36:50 +0200</pubDate>
-      <guid>https://jackbmontgomery.com/posts/about/</guid>
+      <guid>http://localhost:1313/posts/about/</guid>
       <description></description>
     </item>
     <item>
       <title></title>
-      <link>https://jackbmontgomery.com/index-about/</link>
+      <link>http://localhost:1313/index-about/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>https://jackbmontgomery.com/index-about/</guid>
+      <guid>http://localhost:1313/index-about/</guid>
       <description>&lt;h1 id=&#34;hello-there&#34;&gt;Hello There&lt;/h1&gt;&#xA;&lt;p&gt;I&amp;rsquo;m a mathematics enthusiast with a strong interest in applied mathematics, particularly in the areas of active inference, machine learning, and statistical modeling. My work focuses on exploring the intersection of theoretical concepts and real-world applications, from predictive coding and reinforcement learning to function approximation and data analysis. Currently, I am pursuing an Honours degree in Mathematics at the University of Cape Town and planning to further my studies with a Master&amp;rsquo;s in Applied Mathematics in the UK. In addition to my academic pursuits, I enjoy developing software solutions that bridge the gap between theory and practice, leveraging technologies like PyTorch, FastAPI, and Vue.js. Here, you&amp;rsquo;ll find insights into my projects, research, and ongoing explorations in the fascinating world of mathematical modeling and artificial intelligence. Jack Change&lt;/p&gt;</description>
     </item>
   </channel>
