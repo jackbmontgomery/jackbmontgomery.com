@@ -1,0 +1,46 @@
+<header class="header">
+    <nav class="header-nav">
+
+        <div class="nav-title">
+            <a class="nav-brand" href="{{ .Site.BaseURL }}">{{ .Site.Title }}</a>
+        </div>
+
+        <div class="nav-links">
+            
+            <div class="dark-theme-toggle">
+                <span class="sr-only dark-theme-toggle-screen-reader-target">theme</span>
+                <a aria-hidden="true" role="switch">
+                    <span class="theme-toggle-icon" data-feather="moon"></span>
+                </a>
+            </div>
+
+            <span class="nav-icons-divider"></span>
+
+            {{ range .Site.Menus.main }}
+            <div class="nav-link">
+                <a href="{{ .URL | absURL }}" aria-label="{{ .Identifier }}" {{ if .Params.NewPage -}}target="_blank" {{- end -}}>
+                    {{- .Pre | safeHTML }} {{ .Name }} {{ .Post | safeHTML -}}
+                </a>
+            </div>
+            {{ end }}
+
+            <div class="nav-link" id="hamburger-menu-toggle">
+                <span class="sr-only hamburger-menu-toggle-screen-reader-target">menu</span>
+                <a aria-checked="false" aria-labelledby="hamburger-menu-toggle" id="hamburger-menu-toggle-target" role="switch">
+                    <span data-feather="menu"></span>
+                </a>
+            </div>
+
+            <!-- For mobile -->
+            <ul class="nav-hamburger-list visibility-hidden">
+                {{ range .Site.Menus.main }}
+                <li class="nav-item">
+                    <a href="{{ .URL | absURL }}" {{ if .Params.NewPage -}} target="_blank"{{- end -}}>
+                        {{- .Pre | safeHTML }} {{ .Name }} {{ .Post | safeHTML -}}
+                    </a>
+                </li>
+                {{ end }}
+            </ul>
+        </div>
+    </nav>
+</header>
