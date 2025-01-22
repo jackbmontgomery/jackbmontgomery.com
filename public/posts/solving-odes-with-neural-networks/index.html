@@ -36,7 +36,7 @@
 $$ \frac{dy}{dx} &#43; 0.1t - \sin (\pi * t/2) = 0 $$import matplotlib.pyplot as plt …">
     <meta name="keywords" content='physics, neural-networks'>
 
-    <meta property="og:url" content="http://localhost:1313/posts/de-with-nn/">
+    <meta property="og:url" content="http://localhost:1313/posts/solving-odes-with-neural-networks/">
     <meta property="og:type" content="website">
     <meta property="og:title" content="Solving ODE&rsquo;s with Physics Informed Neural Networks">
     <meta property="og:description" content="Solving Differential Equation using Neural Networks First Equation to Solve:
@@ -48,12 +48,12 @@ $$ \frac{dy}{dx} &#43; 0.1t - \sin (\pi * t/2) = 0 $$import matplotlib.pyplot as
     <meta name="twitter:title" content="Solving ODE&rsquo;s with Physics Informed Neural Networks">
     <meta name="twitter:description" content="Solving Differential Equation using Neural Networks First Equation to Solve:
 $$ \frac{dy}{dx} &#43; 0.1t - \sin (\pi * t/2) = 0 $$import matplotlib.pyplot as plt …">
-    <meta property="twitter:domain" content="http://localhost:1313/posts/de-with-nn/">
-    <meta property="twitter:url" content="http://localhost:1313/posts/de-with-nn/">
+    <meta property="twitter:domain" content="http://localhost:1313/posts/solving-odes-with-neural-networks/">
+    <meta property="twitter:url" content="http://localhost:1313/posts/solving-odes-with-neural-networks/">
     <meta name="twitter:image" content="http://localhost:1313/images/profile.webp">
 
     
-    <link rel="canonical" href="http://localhost:1313/posts/de-with-nn/">
+    <link rel="canonical" href="http://localhost:1313/posts/solving-odes-with-neural-networks/">
 
     
     <link rel="stylesheet" type="text/css" href="/css/normalize.min.css" media="print">
@@ -188,10 +188,9 @@ $$ \frac{dy}{dx} &#43; 0.1t - \sin (\pi * t/2) = 0 $$import matplotlib.pyplot as
         <h1 id="solving-differential-equation-using-neural-networks">Solving Differential Equation using Neural Networks</h1>
 <p>First Equation to Solve:</p>
 $$
-\frac{dy}{dx} + 0.1t - \sin (\pi * t/2) = 0
+\frac{dy}{dx} + 0.1t - \sin (\pi * t/2) = 0 
 $$<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> matplotlib.pyplot <span style="color:#66d9ef">as</span> plt
 </span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> numpy <span style="color:#66d9ef">as</span> np
-</span></span><span style="display:flex;"><span><span style="color:#f92672">%</span>matplotlib inline
 </span></span></code></pre></div><h2 id="exact-solution-using-numerical-integration">Exact Solution using numerical integration</h2>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">rk4</span>(f, t, y, h):
 </span></span><span style="display:flex;"><span>    k1 <span style="color:#f92672">=</span> h <span style="color:#f92672">*</span> f(t, y)
@@ -244,7 +243,7 @@ $$<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color
 </span></span><span style="display:flex;"><span>        x <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>activation(x)
 </span></span><span style="display:flex;"><span>        x <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>fc3(x)
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> x
-</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">plot_result</span>(x, y, x_data, y_data, yh, xp<span style="color:#f92672">=</span><span style="color:#66d9ef">None</span>):
 </span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;Pretty plot training results&#34;</span>
 </span></span><span style="display:flex;"><span>    plt<span style="color:#f92672">.</span>figure(figsize<span style="color:#f92672">=</span>(<span style="color:#ae81ff">8</span>, <span style="color:#ae81ff">4</span>))
@@ -325,14 +324,14 @@ $$<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color
 <p><img src="output_6_9.png" alt="png"></p>
 <p><img src="output_6_10.png" alt="png"></p>
 <p><img src="output_6_11.png" alt="png"></p>
-<pre><code>/var/folders/qc/h4k546bs6j9bl76bcjwyw5cw0000gn/T/ipykernel_20571/329073061.py:32: UserWarning: No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
+<pre><code>/var/folders/qc/h4k546bs6j9bl76bcjwyw5cw0000gn/T/ipykernel_37905/329073061.py:32: UserWarning: No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
   plt.legend()
 
 
 
 
 
-&lt;matplotlib.legend.Legend at 0x155abf880&gt;
+&lt;matplotlib.legend.Legend at 0x1276a3790&gt;
 </code></pre>
 <p><img src="output_6_14.png" alt="png"></p>
 <h2 id="using-a-physical-loss-on-the-neural-network">Using a physical loss on the neural network</h2>
@@ -362,25 +361,31 @@ $$<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color
 </span></span><span style="display:flex;"><span>    loss <span style="color:#f92672">=</span> loss1 <span style="color:#f92672">+</span> loss2
 </span></span><span style="display:flex;"><span>    loss<span style="color:#f92672">.</span>backward()
 </span></span><span style="display:flex;"><span>    optimiser<span style="color:#f92672">.</span>step()
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e"># We plot the result as training progresses ....................................</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (i<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>) <span style="color:#f92672">%</span> <span style="color:#ae81ff">100</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>:
 </span></span><span style="display:flex;"><span>        loss_history<span style="color:#f92672">.</span>append(loss<span style="color:#f92672">.</span>detach())
 </span></span><span style="display:flex;"><span>        loss2_history<span style="color:#f92672">.</span>append(loss2<span style="color:#f92672">.</span>detach())
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>        yh <span style="color:#f92672">=</span> model(t_values<span style="color:#f92672">.</span>unsqueeze(<span style="color:#ae81ff">1</span>))<span style="color:#f92672">.</span>detach()<span style="color:#f92672">.</span>squeeze()
-</span></span><span style="display:flex;"><span>        xp <span style="color:#f92672">=</span> t_physics<span style="color:#f92672">.</span>detach()
+</span></span><span style="display:flex;"><span>        xp <span style="color:#f92672">=</span> t_physics<span style="color:#f92672">.</span>detach()        
 </span></span><span style="display:flex;"><span>        plot_result(t_values, y_values, t_train, y_train, yh, xp)
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (i<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>) <span style="color:#f92672">%</span> <span style="color:#ae81ff">6000</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>:
+</span></span><span style="display:flex;"><span>                
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (i<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>) <span style="color:#f92672">%</span> <span style="color:#ae81ff">6000</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>: 
 </span></span><span style="display:flex;"><span>            plt<span style="color:#f92672">.</span>show()
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span>: 
 </span></span><span style="display:flex;"><span>            plt<span style="color:#f92672">.</span>close(<span style="color:#e6db74">&#34;all&#34;</span>)
+</span></span><span style="display:flex;"><span>            
 </span></span></code></pre></div><p><img src="output_8_0.png" alt="png"></p>
 <p><img src="output_8_1.png" alt="png"></p>
 <p><img src="output_8_2.png" alt="png"></p>
+<p><img src="output_8_3.png" alt="png"></p>
+<p><img src="output_8_4.png" alt="png"></p>
+<p><img src="output_8_5.png" alt="png"></p>
+<p><img src="output_8_6.png" alt="png"></p>
+<p><img src="output_8_7.png" alt="png"></p>
 
         
     </div>

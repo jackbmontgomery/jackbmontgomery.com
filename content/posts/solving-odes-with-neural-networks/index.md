@@ -1,29 +1,28 @@
 ---
 date: 2025-01-22T10:36:50+02:00
-# description: ""
-# image: ""
 lastmod: 2025-01-22
 showTableOfContents: false
 tags: ["physics", "neural-networks"]
 title: "Solving ODE's with Physics Informed Neural Networks"
 type: "post"
 ---
-
 # Solving Differential Equation using Neural Networks
 
 First Equation to Solve:
 
 $$
-\frac{dy}{dx} + 0.1t - \sin (\pi * t/2) = 0
+\frac{dy}{dx} + 0.1t - \sin (\pi * t/2) = 0 
 $$
+
 
 ```python
 import matplotlib.pyplot as plt
 import numpy as np
-%matplotlib inline
 ```
 
 ## Exact Solution using numerical integration
+
+
 
 ```python
 def rk4(f, t, y, h):
@@ -56,9 +55,14 @@ plt.scatter(t_train, y_train, c='red')
 plt.show()
 ```
 
+
+    
 ![png](output_3_0.png)
+    
+
 
 ## Use a neural network with no "physical" information
+
 
 ```python
 import torch
@@ -82,7 +86,7 @@ class NN(nn.Module):
         x = self.activation(x)
         x = self.fc3(x)
         return x
-
+    
 def plot_result(x, y, x_data, y_data, yh, xp=None):
     "Pretty plot training results"
     plt.figure(figsize=(8, 4))
@@ -122,6 +126,7 @@ y_train = torch.from_numpy(y_train).float()
 
 ```
 
+
 ```python
 torch.manual_seed(123)
 model = NN()
@@ -158,42 +163,97 @@ plt.legend()
 
 ```
 
+
+    
 ![png](output_6_0.png)
+    
 
+
+
+    
 ![png](output_6_1.png)
+    
 
+
+
+    
 ![png](output_6_2.png)
+    
 
+
+
+    
 ![png](output_6_3.png)
+    
 
+
+
+    
 ![png](output_6_4.png)
+    
 
+
+
+    
 ![png](output_6_5.png)
+    
 
+
+
+    
 ![png](output_6_6.png)
+    
 
+
+
+    
 ![png](output_6_7.png)
+    
 
+
+
+    
 ![png](output_6_8.png)
+    
 
+
+
+    
 ![png](output_6_9.png)
+    
 
+
+
+    
 ![png](output_6_10.png)
+    
 
+
+
+    
 ![png](output_6_11.png)
+    
 
-    /var/folders/qc/h4k546bs6j9bl76bcjwyw5cw0000gn/T/ipykernel_20571/329073061.py:32: UserWarning: No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
+
+    /var/folders/qc/h4k546bs6j9bl76bcjwyw5cw0000gn/T/ipykernel_37905/329073061.py:32: UserWarning: No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
       plt.legend()
 
 
 
 
 
-    <matplotlib.legend.Legend at 0x155abf880>
+    <matplotlib.legend.Legend at 0x1276a3790>
 
+
+
+
+    
 ![png](output_6_14.png)
+    
+
 
 ## Using a physical loss on the neural network
+
 
 ```python
 t_physics = torch.linspace(0, 30, 50).unsqueeze(1).requires_grad_(True)
@@ -222,28 +282,70 @@ for i in range(48000):
     loss = loss1 + loss2
     loss.backward()
     optimiser.step()
-
-
+    
+    
     # We plot the result as training progresses ....................................
     if (i+1) % 100 == 0:
         loss_history.append(loss.detach())
         loss2_history.append(loss2.detach())
 
         yh = model(t_values.unsqueeze(1)).detach().squeeze()
-        xp = t_physics.detach()
+        xp = t_physics.detach()        
         plot_result(t_values, y_values, t_train, y_train, yh, xp)
 
-
-        if (i+1) % 6000 == 0:
+                
+        if (i+1) % 6000 == 0: 
             plt.show()
-        else:
+        else: 
             plt.close("all")
-
+            
 
 ```
 
+
+    
 ![png](output_8_0.png)
+    
 
+
+
+    
 ![png](output_8_1.png)
+    
 
+
+
+    
 ![png](output_8_2.png)
+    
+
+
+
+    
+![png](output_8_3.png)
+    
+
+
+
+    
+![png](output_8_4.png)
+    
+
+
+
+    
+![png](output_8_5.png)
+    
+
+
+
+    
+![png](output_8_6.png)
+    
+
+
+
+    
+![png](output_8_7.png)
+    
+
