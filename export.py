@@ -1,21 +1,63 @@
 import nbformat
 from nbconvert import MarkdownExporter
 import os
+import re
+from datetime import datetime
+from datetime import timezone
+import json
+import argparse
 
 meta_data = """---
 date: 2025-01-22T10:36:50+02:00
-# description: ""
-# image: ""
 lastmod: 2025-01-22
 showTableOfContents: false
 tags: ["physics", "neural-networks"]
-title: "Solving ODE's with Physics Informed Neural Networks v2"
+title: "Solving ODE's with Physics Informed Neural Networks"
 type: "post"
 ---
 """
 
 
-def main(note_book_name="solving-odes-with-neural-networks"):
+def build_meta_post_section(date, meta_last_mod, tags, title):
+    return f'---\ndate: {date}\nlastmod: {meta_last_mod}\nshowTableOfContents: true\ntags: {tags}\ntitle: "{title}"\ntype: "post"\n---\n'
+    # return meta_data
+
+
+def replace_math_delimiters(text):
+    # Replace all $$...$$ first to avoid conflicts with single $
+    text = re.sub(r"\$\$(.*?)\$\$", r"\\[\1\\]", text, flags=re.DOTALL)
+
+    # Replace all $...$ afterwards
+    text = re.sub(r"\$(.*?)\$", r"\\(\1\\)", text, flags=re.DOTALL)
+
+    return text
+
+
+def extract_title(text):
+    start = text.index("#") + 1  # Find first # and move past it
+    end = text.index("\n", start)  # Find next newline after #
+    return text[start:end].strip()  # Return trimmed text between them
+
+
+def extract_existing_date(text):
+    start = text.index("date:") + 5
+    end = text.index("\n", start)
+    return text[start:end].strip()
+
+
+def extract_existing_tags(text):
+    start = text.index("tags:") + 5
+    end = text.index("\n", start)
+    return text[start:end].strip()
+
+
+def format_tags(*args):
+    if len(args) == 0:
+        return None
+    return json.dumps(list(args))
+
+
+def main(note_book_name, meta_tags):
     post_directory = f"./content/posts/{note_book_name}"
     post_markdown_file = f"{post_directory}/index.md"
 
@@ -25,13 +67,29 @@ def main(note_book_name="solving-odes-with-neural-networks"):
     markdown_exporter = MarkdownExporter()
     (body, resources) = markdown_exporter.from_notebook_node(notebook)
 
+    now_utc = datetime.now(timezone.utc)
+
     if not os.path.exists(post_directory):
         os.mkdir(post_directory)
         with open(post_markdown_file, "w"):
             pass
+        meta_date = now_utc.strftime("%Y-%m-%d")
+
+        if meta_tags is None:
+            raise Exception("Need to specify tags on the first export")
+    else:
+        with open(post_markdown_file, "r") as f:
+            content = f.read()
+        meta_date = extract_existing_date(content)
+        meta_tags = extract_existing_tags(content) if meta_tags is None else meta_tags
+
+    meta_title = extract_title(body)
+    meta_last_mod = now_utc.strftime("%Y-%m-%dT%H:%M:%S")
+
+    meta_data = build_meta_post_section(meta_date, meta_last_mod, meta_tags, meta_title)
 
     with open(post_markdown_file, "w") as f:
-        f.write(meta_data + body)
+        f.write(replace_math_delimiters(meta_data + body))
 
     # Save images and resources
     for filename, content in resources["outputs"].items():
@@ -41,16 +99,16 @@ def main(note_book_name="solving-odes-with-neural-networks"):
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Process some inputs.")
 
+    parser.add_argument(
+        "--notebook",
+        type=str,
+        help="Specify the notebook name",
+        required=True,
+    )
+    parser.add_argument("--tags", nargs="+", help="List of tags", required=False)
 
-# ---
-# date: 2025-01-22T18:50:35+02:00
-# # description: ""
-# # image: ""
-# lastmod: 2025-01-22
-# showTableOfContents: false
-# # tags: ["",]
-# title: "Something"
-# type: "post"
-# ---
+    args = parser.parse_args()
+
+    main(args.notebook, args.tags)

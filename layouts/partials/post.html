@@ -10,6 +10,8 @@
         {{ $tagsHidePostDate := or .Site.Params.Hidden.TagsPostDate slice }}
         {{ $tagsHidePostDescription := or .Site.Params.Hidden.TagsPostDescription slice }}
 
+        <p>{{.Site.Params.Hidden.TagsPostDescription}}</p>
+
         {{ if gt ($tagsHidePostDate | intersect $postTags | len) 0 }}
         {{ $displayDate = false }}
         {{ end }}

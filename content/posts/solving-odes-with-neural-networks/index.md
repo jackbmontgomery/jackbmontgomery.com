@@ -1,30 +1,43 @@
 ---
-date: 2025-01-22T10:36:50+02:00
-lastmod: 2025-01-22
-showTableOfContents: false
-tags: ["physics", "neural-networks"]
-title: "Solving ODE's with Physics Informed Neural Networks"
+date: 2025-01-22
+lastmod: 2025-01-22T22:46:01
+showTableOfContents: true
+tags: ['physics', 'neural-networks']
+title: "Solving Ordinary Differential Equation using Neural Networks"
 type: "post"
 ---
-# Solving Differential Equation using Neural Networks
+# Solving Ordinary Differential Equation using Neural Networks
+
+Neural networks train based on backpropogated errors signals from the training data. But what if there were some additional constraint on the results of the network that could help the training. When we consider **physical** constraints on the system in order to facilitate learning in the neural network we obtain what is called **physics informed neural networks (PINN) **. 
+
+The particular use case we will consider for PINN's is solving ordinary differential equations. This post is inspired by the the work of [Hubert Baty, Leo Baty](https://arxiv.org/abs/2302.12260).
 
 First Equation to Solve:
 
-$$
-\frac{dy}{dx} + 0.1t - \sin (\pi * t/2) = 0 
-$$
+\[
+\frac{dy}{dt} + 0.1y - \sin (\pi * t/2) = 0 
+\]
+
+Solving a differential equation means finding \(y(t)\) such that this equation is satisfied. But, solving differential equations is hard and is mostly impossible. So, we often turn to numerical schemes in order to approximate the solution.
+
+## Exact Solution using numerical integration
+
+We will use the Runge-Kutta 4 (RK4) as our numerical integrator to plot the trajectory of the solution in \(t \in [0, 30]\). The RK4 method uses the expressed stated as a function of the first derivative, that is:
+
+\[
+\frac{dy}{dt} = \sin (\pi * t/2) - 0.1y
+\]
+
+With the initial condition: \(y(0) = 1\).
+
+Using this, the method then estimates the change in the value of y for a given step size. Let us see this in action:
+
 
 
 ```python
 import matplotlib.pyplot as plt
 import numpy as np
-```
 
-## Exact Solution using numerical integration
-
-
-
-```python
 def rk4(f, t, y, h):
     k1 = h * f(t, y)
     k2 = h * f(t + h / 2, y + k1 / 2)
@@ -47,21 +60,25 @@ def dy_dt(t, y):
 
 t_values, y_values = solve_ode(dy_dt, 0, 1, 30, 0.01)
 
-t_train = t_values[::100]
-y_train = y_values[::100]
-
+plt.xlabel("t")
+plt.ylabel("y(t)")
 plt.plot(t_values, y_values)
-plt.scatter(t_train, y_train, c='red')
 plt.show()
 ```
 
 
     
-![png](output_3_0.png)
+![png](output_2_0.png)
     
 
 
+This is the exact solution to the differential equation. Well not exact since we have used a numerical integrator, but with a simple, non-chaotic system here integrated over a small time scale we can be pretty confident. 
+
+But is to note is that the only way we can find the solution using this method is to step through the integrator. There is no machine where we can plug in a time and it will spit out the y - like what a function does - we can only tell where the particle will be at time t by starting at time 0 and walking through. 
+
 ## Use a neural network with no "physical" information
+
+We can use neural networks as a universal approximator in order to try and learn the solution for \(y(t)\). We can do this by taking a sample of the solution data set that we obtained using numerical integration, and iteratively learning based on these samples. Let us first create a basic neural network using PyTorch as well as a result plotting function.
 
 
 ```python
@@ -116,14 +133,19 @@ def plot_result(x, y, x_data, y_data, yh, xp=None):
     plt.ylim(-0.65, 2.25)
     plt.text(2.965, 1.95, "Training step: %i" % (i + 1), fontsize="xx-large", color="k")
     plt.ylabel("y", fontsize="xx-large")
-    plt.xlabel("Time", fontsize="xx-large")
+    plt.xlabel("t", fontsize="xx-large")
     plt.axis("on")
+```
 
-t_values = torch.from_numpy(t_values).float()
-y_values = torch.from_numpy(y_values).float()
-t_train = torch.from_numpy(t_train).float()
-y_train = torch.from_numpy(y_train).float()
+We can now sample our training set.
 
+
+```python
+t_values = torch.Tensor(t_values)
+y_values = torch.Tensor(y_values)
+
+t_train = t_values[::100]
+y_train = y_values[::100]
 ```
 
 
@@ -135,7 +157,7 @@ optimiser = optim.Adam(model.parameters(), lr=3e-3)
 files = []
 loss11_history = []
 
-for i in range(48000):
+for i in range(25000):
     yh = model(t_train.unsqueeze(1)).squeeze()
     loss = torch.mean((yh - y_train) ** 2)
 
@@ -146,7 +168,7 @@ for i in range(48000):
     if (i + 1) % 100 == 0:
         loss11_history.append(loss.detach())
 
-        if (i + 1) % 4000 == 0:
+        if (i + 1) % 5000 == 0:
             yh = model(t_values.unsqueeze(1)).detach()
 
             plot_result(t_values, y_values, t_train, y_train, yh)
@@ -156,149 +178,10 @@ for i in range(48000):
 
 fig11 = plt.figure(11)
 plt.plot(loss11_history)
-plt.xlabel("Training step ($10^2$)", fontsize="xx-large")
+plt.xlabel("Training step (\(10^2\))", fontsize="xx-large")
 plt.ylabel("Loss", fontsize="xx-large")
 plt.yscale("log")
-plt.legend()
-
-```
-
-
-    
-![png](output_6_0.png)
-    
-
-
-
-    
-![png](output_6_1.png)
-    
-
-
-
-    
-![png](output_6_2.png)
-    
-
-
-
-    
-![png](output_6_3.png)
-    
-
-
-
-    
-![png](output_6_4.png)
-    
-
-
-
-    
-![png](output_6_5.png)
-    
-
-
-
-    
-![png](output_6_6.png)
-    
-
-
-
-    
-![png](output_6_7.png)
-    
-
-
-
-    
-![png](output_6_8.png)
-    
-
-
-
-    
-![png](output_6_9.png)
-    
-
-
-
-    
-![png](output_6_10.png)
-    
-
-
-
-    
-![png](output_6_11.png)
-    
-
-
-    /var/folders/qc/h4k546bs6j9bl76bcjwyw5cw0000gn/T/ipykernel_37905/329073061.py:32: UserWarning: No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
-      plt.legend()
-
-
-
-
-
-    <matplotlib.legend.Legend at 0x1276a3790>
-
-
-
-
-    
-![png](output_6_14.png)
-    
-
-
-## Using a physical loss on the neural network
-
-
-```python
-t_physics = torch.linspace(0, 30, 50).unsqueeze(1).requires_grad_(True)
-lam = 0.1
-
-torch.manual_seed(123)
-model = NN()
-optimiser = torch.optim.Adam(model.parameters(), lr=3e-3)
-
-loss_history = []
-loss2_history = []
-
-for i in range(48000):
-
-    optimiser.zero_grad()
-
-    yh = model(t_train.unsqueeze(1)).squeeze()
-    loss1 = 1.*torch.mean((yh-y_train)**2)
-
-    yhp = model(t_physics.unsqueeze(1)).squeeze()
-    dx = torch.autograd.grad(yhp, t_physics, torch.ones_like(yhp), create_graph=True)[0]
-
-    physics = dx + lam * yhp - torch.sin(np.pi * t_physics / 2)
-    loss2 = (6e-2) * (torch.mean(physics**2))
-
-    loss = loss1 + loss2
-    loss.backward()
-    optimiser.step()
-    
-    
-    # We plot the result as training progresses ....................................
-    if (i+1) % 100 == 0:
-        loss_history.append(loss.detach())
-        loss2_history.append(loss2.detach())
-
-        yh = model(t_values.unsqueeze(1)).detach().squeeze()
-        xp = t_physics.detach()        
-        plot_result(t_values, y_values, t_train, y_train, yh, xp)
-
-                
-        if (i+1) % 6000 == 0: 
-            plt.show()
-        else: 
-            plt.close("all")
-            
+plt.show()
 
 ```
 
@@ -338,14 +221,81 @@ for i in range(48000):
     
 
 
+## Using a physical loss on the neural network
+
+
+```python
+t_physics = torch.linspace(0, 30, 50).unsqueeze(1).requires_grad_(True)
+lam = 0.1
+
+torch.manual_seed(123)
+model = NN()
+optimiser = torch.optim.Adam(model.parameters(), lr=3e-3)
+
+loss_history = []
+loss2_history = []
+
+for i in range(25000):
+
+    optimiser.zero_grad()
+
+    yh = model(t_train.unsqueeze(1)).squeeze()
+    loss1 = 1.*torch.mean((yh-y_train)**2)
+
+    yhp = model(t_physics.unsqueeze(1)).squeeze()
+    dx = torch.autograd.grad(yhp, t_physics, torch.ones_like(yhp), create_graph=True)[0]
+
+    physics = dx + lam * yhp - torch.sin(np.pi * t_physics / 2)
+    loss2 = (6e-2) * (torch.mean(physics**2))
+
+    loss = loss1 + loss2
+    loss.backward()
+    optimiser.step()
+    
+    
+    # We plot the result as training progresses ....................................
+    if (i+1) % 100 == 0:
+        loss_history.append(loss.detach())
+        loss2_history.append(loss2.detach())
+
+                
+        if (i+1) % 5000 == 0: 
+            yh = model(t_values.unsqueeze(1)).detach().squeeze()
+            xp = t_physics.detach()        
+            plot_result(t_values, y_values, t_train, y_train, yh, xp)
+            plt.show()
+        else: 
+            plt.close("all")
+            
+
+```
+
 
     
-![png](output_8_6.png)
+![png](output_10_0.png)
     
 
 
 
     
-![png](output_8_7.png)
+![png](output_10_1.png)
+    
+
+
+
+    
+![png](output_10_2.png)
+    
+
+
+
+    
+![png](output_10_3.png)
+    
+
+
+
+    
+![png](output_10_4.png)
     
 
