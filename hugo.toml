@@ -6,6 +6,15 @@ languageCode = "en"
 theme = "gokarna"
 title = "Jack Montgomery"
 
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.extensions]
+      [markup.goldmark.extensions.passthrough]
+        enable = true
+        [markup.goldmark.extensions.passthrough.delimiters]
+          block = [['\[', '\]'], ['$$', '$$']]
+          inline = [['\(', '\)']]
+
 [params]
     avatarUrl = "/images/profile.webp"
     avatarAltText = "avatar"
@@ -20,6 +29,8 @@ title = "Jack Montgomery"
     {name="github", url="https://github.com/jackbmontgomery"},
     {name="email", url="mailto:mail@jackbmontgomery.com"},
   ]
+
+  math = true
 
 [menu]
   [[menu.main]]

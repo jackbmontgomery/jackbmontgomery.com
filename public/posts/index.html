@@ -5,8 +5,21 @@
 
     <style>
         :root {
-            --accent-color: #FF4D4D;
-            --font-size: 17.5px;
+            --accent-color: {
+                    {
+                    .Site.Params.AccentColor | default "#FF4D4D"
+                }
+            }
+
+            ;
+
+            --font-size: {
+                    {
+                    .Site.Params.FontSize | default "17.5px"
+                }
+            }
+
+            ;
         }
     </style>
 
@@ -53,8 +66,20 @@
 
     
     
-</head>
-<body>
+
+    
+    
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<script>
+    MathJax = {
+        tex: {
+            displayMath: [['\\[', '\\]'], ['$$', '$$']],  
+            inlineMath: [['\\(', '\\)']]                  
+        }
+    };
+</script>
+    
+</head><body>
         <script>
             
             setThemeByUserPref();
@@ -124,6 +149,20 @@
     
 
     <h2 class="posts-year">2025</h2><div class="post-title">
+     <a href="http://localhost:1313/posts/de-with-nn/" class="post-link">Solving ODE&rsquo;s with Physics Informed Neural Networks</a>
+     
+     
+     
+     
+
+     
+
+     
+      <div class="flex-break"></div>
+      <span class="post-date">January 22, 2025</span>
+     
+</div>
+<div class="post-title">
      <a href="http://localhost:1313/posts/about/" class="post-link">About</a>
      
      

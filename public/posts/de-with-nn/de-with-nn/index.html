@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        :root {
+            --accent-color: #FF4D4D;
+            --font-size: 17.5px;
+        }
+    </style>
+
+    
+    
+    
+    
+    
+    
+
+    
+    <title>Solving ODE&rsquo;s with Physics Informed Neural Networks</title>
+    <meta name="description" content="Solving Differential Equation using Neural Networks First Equation to Solve:
+$$ \frac{dy}{dx} &#43; 0.1t - \sin (\pi * t/2) = 0 $$
+import matplotlib.pyplot as plt …">
+    <meta name="keywords" content='physics, neural-networks'>
+
+    <meta property="og:url" content="http://localhost:1313/posts/de-with-nn/de-with-nn/">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Solving ODE&rsquo;s with Physics Informed Neural Networks">
+    <meta property="og:description" content="Solving Differential Equation using Neural Networks First Equation to Solve:
+$$ \frac{dy}{dx} &#43; 0.1t - \sin (\pi * t/2) = 0 $$
+import matplotlib.pyplot as plt …">
+    <meta property="og:image" content="http://localhost:1313/images/profile.webp">
+    <meta property="og:image:secure_url" content="http://localhost:1313/images/profile.webp">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Solving ODE&rsquo;s with Physics Informed Neural Networks">
+    <meta name="twitter:description" content="Solving Differential Equation using Neural Networks First Equation to Solve:
+$$ \frac{dy}{dx} &#43; 0.1t - \sin (\pi * t/2) = 0 $$
+import matplotlib.pyplot as plt …">
+    <meta property="twitter:domain" content="http://localhost:1313/posts/de-with-nn/de-with-nn/">
+    <meta property="twitter:url" content="http://localhost:1313/posts/de-with-nn/de-with-nn/">
+    <meta name="twitter:image" content="http://localhost:1313/images/profile.webp">
+
+    
+    <link rel="canonical" href="http://localhost:1313/posts/de-with-nn/de-with-nn/">
+
+    
+    <link rel="stylesheet" type="text/css" href="/css/normalize.min.css" media="print">
+
+    
+    <link rel="stylesheet" type="text/css" href="/css/main.min.css">
+
+    
+    <link id="dark-theme" rel="stylesheet" href="/css/dark.min.css">
+
+    
+    <script src="/js/bundle.min.3eb19cb61dde9e37b9522867f3e024aeb68e26ab8e03252e46e365abcb19acf7.js" integrity="sha256-PrGcth3enje5Uihn8&#43;AkrraOJquOAyUuRuNlq8sZrPc="></script>
+
+    
+    
+</head>
+<body>
+        <script>
+            
+            setThemeByUserPref();
+        </script><header class="header">
+    <nav class="header-nav">
+
+        <div class="nav-title">
+            <a class="nav-brand" href="http://localhost:1313/">Jack Montgomery</a>
+        </div>
+
+        <div class="nav-links">
+
+            <div class="dark-theme-toggle">
+                <span class="sr-only dark-theme-toggle-screen-reader-target">theme</span>
+                <a aria-hidden="true" role="switch">
+                    <span class="theme-toggle-icon" data-feather="moon"></span>
+                </a>
+            </div>
+
+            <span class="nav-icons-divider"></span>
+
+            
+            <div class="nav-link">
+                <a href="http://localhost:1313/posts/" aria-label="" > Posts </a>
+            </div>
+            
+            <div class="nav-link">
+                <a href="http://localhost:1313/tags/" aria-label="" > Tags </a>
+            </div>
+            
+            <div class="nav-link">
+                <a href="http://localhost:1313/pdfs/CV.pdf" aria-label="" target="_blank"> CV </a>
+            </div>
+            
+
+            <div class="nav-link" id="hamburger-menu-toggle">
+                <span class="sr-only hamburger-menu-toggle-screen-reader-target">menu</span>
+                <a aria-checked="false" aria-labelledby="hamburger-menu-toggle" id="hamburger-menu-toggle-target"
+                    role="switch">
+                    <span data-feather="menu"></span>
+                </a>
+            </div>
+
+            
+            <ul class="nav-hamburger-list visibility-hidden">
+                
+                <li class="nav-item">
+                    <a href="http://localhost:1313/posts/" > Posts </a>
+                </li>
+                
+                <li class="nav-item">
+                    <a href="http://localhost:1313/tags/" > Tags </a>
+                </li>
+                
+                <li class="nav-item">
+                    <a href="http://localhost:1313/pdfs/CV.pdf" target="_blank"> CV </a>
+                </li>
+                
+            </ul>
+        </div>
+    </nav>
+</header><main id="content">
+    <div class="post container">
+    <div class="post-header-section">
+        <h1>Solving ODE&rsquo;s with Physics Informed Neural Networks</h1>
+
+        
+
+        
+	
+	
+	
+	
+        
+
+	
+
+	
+
+	
+          <small role="doc-subtitle"></small>
+	
+
+	
+          <p class="post-date">January 22, 2025
+           
+          </p>
+	
+
+        <ul class="post-tags">
+          
+           
+             <li class="post-tag"><a href="http://localhost:1313/tags/physics">physics</a></li>
+           
+         
+           
+             <li class="post-tag"><a href="http://localhost:1313/tags/neural-networks">neural-networks</a></li>
+           
+         
+        </ul>
+    </div>
+
+    <div class="post-content">
+        <h1 id="solving-differential-equation-using-neural-networks">Solving Differential Equation using Neural Networks</h1>
+<p>First Equation to Solve:</p>
+<p>$$
+\frac{dy}{dx} + 0.1t - \sin (\pi * t/2) = 0
+$$</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> matplotlib.pyplot <span style="color:#66d9ef">as</span> plt
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> numpy <span style="color:#66d9ef">as</span> np
+</span></span><span style="display:flex;"><span><span style="color:#f92672">%</span>matplotlib inline
+</span></span></code></pre></div><h2 id="exact-solution-using-numerical-integration">Exact Solution using numerical integration</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">rk4</span>(f, t, y, h):
+</span></span><span style="display:flex;"><span>    k1 <span style="color:#f92672">=</span> h <span style="color:#f92672">*</span> f(t, y)
+</span></span><span style="display:flex;"><span>    k2 <span style="color:#f92672">=</span> h <span style="color:#f92672">*</span> f(t <span style="color:#f92672">+</span> h <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>, y <span style="color:#f92672">+</span> k1 <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>)
+</span></span><span style="display:flex;"><span>    k3 <span style="color:#f92672">=</span> h <span style="color:#f92672">*</span> f(t <span style="color:#f92672">+</span> h <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>, y <span style="color:#f92672">+</span> k2 <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>)
+</span></span><span style="display:flex;"><span>    k4 <span style="color:#f92672">=</span> h <span style="color:#f92672">*</span> f(t <span style="color:#f92672">+</span> h, y <span style="color:#f92672">+</span> k3)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> y <span style="color:#f92672">+</span> (k1 <span style="color:#f92672">+</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> k2 <span style="color:#f92672">+</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> k3 <span style="color:#f92672">+</span> k4) <span style="color:#f92672">/</span> <span style="color:#ae81ff">6</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">solve_ode</span>(f, t0, y0, t_end, h):
+</span></span><span style="display:flex;"><span>    t_values <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>arange(t0, t_end <span style="color:#f92672">+</span> h, h)
+</span></span><span style="display:flex;"><span>    y_values <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>zeros((len(t_values),) <span style="color:#f92672">+</span> np<span style="color:#f92672">.</span>shape(y0))
+</span></span><span style="display:flex;"><span>    y_values[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">=</span> y0
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">1</span>, len(t_values)):
+</span></span><span style="display:flex;"><span>        y_values[i] <span style="color:#f92672">=</span> rk4(f, t_values[i <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>], y_values[i <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>], h)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> t_values, y_values
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">dy_dt</span>(t, y):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> np<span style="color:#f92672">.</span>sin(np<span style="color:#f92672">.</span>pi <span style="color:#f92672">*</span> t <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span> ) <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span><span style="color:#f92672">/</span><span style="color:#ae81ff">10</span> <span style="color:#f92672">*</span> y
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>t_values, y_values <span style="color:#f92672">=</span> solve_ode(dy_dt, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">30</span>, <span style="color:#ae81ff">0.01</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>t_train <span style="color:#f92672">=</span> t_values[::<span style="color:#ae81ff">100</span>]
+</span></span><span style="display:flex;"><span>y_train <span style="color:#f92672">=</span> y_values[::<span style="color:#ae81ff">100</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>plot(t_values, y_values)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>scatter(t_train, y_train, c<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;red&#39;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>show()
+</span></span></code></pre></div><p><img src="output_3_0.png" alt="png"></p>
+<h2 id="use-a-neural-network-with-no-physical-information">Use a neural network with no &ldquo;physical&rdquo; information</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> torch
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> torch.nn <span style="color:#66d9ef">as</span> nn
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> torch.optim <span style="color:#66d9ef">as</span> optim
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">NN</span>(nn<span style="color:#f92672">.</span>Module):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> __init__(self, n_input<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>, n_output<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>, hidden_dim<span style="color:#f92672">=</span><span style="color:#ae81ff">32</span>):
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        super()<span style="color:#f92672">.</span>__init__()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>activation <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Tanh()
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>fc1 <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Linear(n_input, hidden_dim)
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>fc2 <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Linear(hidden_dim, hidden_dim)
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>fc3 <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Linear(hidden_dim, n_output)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">forward</span>(self, x):
+</span></span><span style="display:flex;"><span>        x <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>fc1(x)
+</span></span><span style="display:flex;"><span>        x <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>activation(x)
+</span></span><span style="display:flex;"><span>        x <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>fc2(x)
+</span></span><span style="display:flex;"><span>        x <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>activation(x)
+</span></span><span style="display:flex;"><span>        x <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>fc3(x)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> x
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">plot_result</span>(x, y, x_data, y_data, yh, xp<span style="color:#f92672">=</span><span style="color:#66d9ef">None</span>):
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;Pretty plot training results&#34;</span>
+</span></span><span style="display:flex;"><span>    plt<span style="color:#f92672">.</span>figure(figsize<span style="color:#f92672">=</span>(<span style="color:#ae81ff">8</span>, <span style="color:#ae81ff">4</span>))
+</span></span><span style="display:flex;"><span>    plt<span style="color:#f92672">.</span>plot(x, yh, color<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;tab:red&#34;</span>, linewidth<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>, alpha<span style="color:#f92672">=</span><span style="color:#ae81ff">0.8</span>, label<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;NN prediction&#34;</span>)
+</span></span><span style="display:flex;"><span>    plt<span style="color:#f92672">.</span>plot(
+</span></span><span style="display:flex;"><span>        x,
+</span></span><span style="display:flex;"><span>        y,
+</span></span><span style="display:flex;"><span>        color<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;blue&#34;</span>,
+</span></span><span style="display:flex;"><span>        linewidth<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>,
+</span></span><span style="display:flex;"><span>        alpha<span style="color:#f92672">=</span><span style="color:#ae81ff">0.8</span>,
+</span></span><span style="display:flex;"><span>        linestyle<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;--&#34;</span>,
+</span></span><span style="display:flex;"><span>        label<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Exact solution&#34;</span>,
+</span></span><span style="display:flex;"><span>    )
+</span></span><span style="display:flex;"><span>    plt<span style="color:#f92672">.</span>scatter(x_data, y_data, s<span style="color:#f92672">=</span><span style="color:#ae81ff">60</span>, color<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;tab:red&#34;</span>, alpha<span style="color:#f92672">=</span><span style="color:#ae81ff">0.4</span>, label<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Training data&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> xp <span style="color:#f92672">is</span> <span style="color:#f92672">not</span> <span style="color:#66d9ef">None</span>:
+</span></span><span style="display:flex;"><span>        plt<span style="color:#f92672">.</span>scatter(
+</span></span><span style="display:flex;"><span>            xp,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">-</span><span style="color:#ae81ff">0</span> <span style="color:#f92672">*</span> torch<span style="color:#f92672">.</span>ones_like(xp),
+</span></span><span style="display:flex;"><span>            s<span style="color:#f92672">=</span><span style="color:#ae81ff">30</span>,
+</span></span><span style="display:flex;"><span>            color<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;tab:green&#34;</span>,
+</span></span><span style="display:flex;"><span>            alpha<span style="color:#f92672">=</span><span style="color:#ae81ff">0.4</span>,
+</span></span><span style="display:flex;"><span>            label<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Collocation points&#34;</span>,
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>    leg <span style="color:#f92672">=</span> plt<span style="color:#f92672">.</span>legend(loc<span style="color:#f92672">=</span>(<span style="color:#ae81ff">0.67</span>, <span style="color:#ae81ff">0.62</span>), frameon<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>, fontsize<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;large&#34;</span>)
+</span></span><span style="display:flex;"><span>    plt<span style="color:#f92672">.</span>setp(leg<span style="color:#f92672">.</span>get_texts(), color<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;k&#34;</span>)
+</span></span><span style="display:flex;"><span>    plt<span style="color:#f92672">.</span>xlim(<span style="color:#f92672">-</span><span style="color:#ae81ff">1.25</span>, <span style="color:#ae81ff">31.05</span>)
+</span></span><span style="display:flex;"><span>    plt<span style="color:#f92672">.</span>ylim(<span style="color:#f92672">-</span><span style="color:#ae81ff">0.65</span>, <span style="color:#ae81ff">2.25</span>)
+</span></span><span style="display:flex;"><span>    plt<span style="color:#f92672">.</span>text(<span style="color:#ae81ff">2.965</span>, <span style="color:#ae81ff">1.95</span>, <span style="color:#e6db74">&#34;Training step: </span><span style="color:#e6db74">%i</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">%</span> (i <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>), fontsize<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;xx-large&#34;</span>, color<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;k&#34;</span>)
+</span></span><span style="display:flex;"><span>    plt<span style="color:#f92672">.</span>ylabel(<span style="color:#e6db74">&#34;y&#34;</span>, fontsize<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;xx-large&#34;</span>)
+</span></span><span style="display:flex;"><span>    plt<span style="color:#f92672">.</span>xlabel(<span style="color:#e6db74">&#34;Time&#34;</span>, fontsize<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;xx-large&#34;</span>)
+</span></span><span style="display:flex;"><span>    plt<span style="color:#f92672">.</span>axis(<span style="color:#e6db74">&#34;on&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>t_values <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>from_numpy(t_values)<span style="color:#f92672">.</span>float()
+</span></span><span style="display:flex;"><span>y_values <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>from_numpy(y_values)<span style="color:#f92672">.</span>float()
+</span></span><span style="display:flex;"><span>t_train <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>from_numpy(t_train)<span style="color:#f92672">.</span>float()
+</span></span><span style="display:flex;"><span>y_train <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>from_numpy(y_train)<span style="color:#f92672">.</span>float()
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>torch<span style="color:#f92672">.</span>manual_seed(<span style="color:#ae81ff">123</span>)
+</span></span><span style="display:flex;"><span>model <span style="color:#f92672">=</span> NN()
+</span></span><span style="display:flex;"><span>optimiser <span style="color:#f92672">=</span> optim<span style="color:#f92672">.</span>Adam(model<span style="color:#f92672">.</span>parameters(), lr<span style="color:#f92672">=</span><span style="color:#ae81ff">3e-3</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>files <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>loss11_history <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">48000</span>):
+</span></span><span style="display:flex;"><span>    yh <span style="color:#f92672">=</span> model(t_train<span style="color:#f92672">.</span>unsqueeze(<span style="color:#ae81ff">1</span>))<span style="color:#f92672">.</span>squeeze()
+</span></span><span style="display:flex;"><span>    loss <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>mean((yh <span style="color:#f92672">-</span> y_train) <span style="color:#f92672">**</span> <span style="color:#ae81ff">2</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    optimiser<span style="color:#f92672">.</span>zero_grad()
+</span></span><span style="display:flex;"><span>    loss<span style="color:#f92672">.</span>backward()
+</span></span><span style="display:flex;"><span>    optimiser<span style="color:#f92672">.</span>step()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (i <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">%</span> <span style="color:#ae81ff">100</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>:
+</span></span><span style="display:flex;"><span>        loss11_history<span style="color:#f92672">.</span>append(loss<span style="color:#f92672">.</span>detach())
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (i <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">%</span> <span style="color:#ae81ff">4000</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>:
+</span></span><span style="display:flex;"><span>            yh <span style="color:#f92672">=</span> model(t_values<span style="color:#f92672">.</span>unsqueeze(<span style="color:#ae81ff">1</span>))<span style="color:#f92672">.</span>detach()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            plot_result(t_values, y_values, t_train, y_train, yh)
+</span></span><span style="display:flex;"><span>            plt<span style="color:#f92672">.</span>show()
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>            plt<span style="color:#f92672">.</span>close(<span style="color:#e6db74">&#34;all&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>fig11 <span style="color:#f92672">=</span> plt<span style="color:#f92672">.</span>figure(<span style="color:#ae81ff">11</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>plot(loss11_history)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>xlabel(<span style="color:#e6db74">&#34;Training step ($10^2$)&#34;</span>, fontsize<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;xx-large&#34;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>ylabel(<span style="color:#e6db74">&#34;Loss&#34;</span>, fontsize<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;xx-large&#34;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>yscale(<span style="color:#e6db74">&#34;log&#34;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>legend()
+</span></span></code></pre></div><p><img src="output_6_0.png" alt="png"></p>
+<p><img src="output_6_1.png" alt="png"></p>
+<p><img src="output_6_2.png" alt="png"></p>
+<p><img src="output_6_3.png" alt="png"></p>
+<p><img src="output_6_4.png" alt="png"></p>
+<p><img src="output_6_5.png" alt="png"></p>
+<p><img src="output_6_6.png" alt="png"></p>
+<p><img src="output_6_7.png" alt="png"></p>
+<p><img src="output_6_8.png" alt="png"></p>
+<p><img src="output_6_9.png" alt="png"></p>
+<p><img src="output_6_10.png" alt="png"></p>
+<p><img src="output_6_11.png" alt="png"></p>
+<pre><code>/var/folders/qc/h4k546bs6j9bl76bcjwyw5cw0000gn/T/ipykernel_20571/329073061.py:32: UserWarning: No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
+  plt.legend()
+
+
+
+
+
+&lt;matplotlib.legend.Legend at 0x155abf880&gt;
+</code></pre>
+<p><img src="output_6_14.png" alt="png"></p>
+<h2 id="using-a-physical-loss-on-the-neural-network">Using a physical loss on the neural network</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>t_physics <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>linspace(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">30</span>, <span style="color:#ae81ff">50</span>)<span style="color:#f92672">.</span>unsqueeze(<span style="color:#ae81ff">1</span>)<span style="color:#f92672">.</span>requires_grad_(<span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>lam <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>torch<span style="color:#f92672">.</span>manual_seed(<span style="color:#ae81ff">123</span>)
+</span></span><span style="display:flex;"><span>model <span style="color:#f92672">=</span> NN()
+</span></span><span style="display:flex;"><span>optimiser <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>optim<span style="color:#f92672">.</span>Adam(model<span style="color:#f92672">.</span>parameters(), lr<span style="color:#f92672">=</span><span style="color:#ae81ff">3e-3</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>loss_history <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>loss2_history <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">48000</span>):
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    optimiser<span style="color:#f92672">.</span>zero_grad()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    yh <span style="color:#f92672">=</span> model(t_train<span style="color:#f92672">.</span>unsqueeze(<span style="color:#ae81ff">1</span>))<span style="color:#f92672">.</span>squeeze()
+</span></span><span style="display:flex;"><span>    loss1 <span style="color:#f92672">=</span> <span style="color:#ae81ff">1.</span><span style="color:#f92672">*</span>torch<span style="color:#f92672">.</span>mean((yh<span style="color:#f92672">-</span>y_train)<span style="color:#f92672">**</span><span style="color:#ae81ff">2</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    yhp <span style="color:#f92672">=</span> model(t_physics<span style="color:#f92672">.</span>unsqueeze(<span style="color:#ae81ff">1</span>))<span style="color:#f92672">.</span>squeeze()
+</span></span><span style="display:flex;"><span>    dx <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>autograd<span style="color:#f92672">.</span>grad(yhp, t_physics, torch<span style="color:#f92672">.</span>ones_like(yhp), create_graph<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)[<span style="color:#ae81ff">0</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    physics <span style="color:#f92672">=</span> dx <span style="color:#f92672">+</span> lam <span style="color:#f92672">*</span> yhp <span style="color:#f92672">-</span> torch<span style="color:#f92672">.</span>sin(np<span style="color:#f92672">.</span>pi <span style="color:#f92672">*</span> t_physics <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>)
+</span></span><span style="display:flex;"><span>    loss2 <span style="color:#f92672">=</span> (<span style="color:#ae81ff">6e-2</span>) <span style="color:#f92672">*</span> (torch<span style="color:#f92672">.</span>mean(physics<span style="color:#f92672">**</span><span style="color:#ae81ff">2</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    loss <span style="color:#f92672">=</span> loss1 <span style="color:#f92672">+</span> loss2
+</span></span><span style="display:flex;"><span>    loss<span style="color:#f92672">.</span>backward()
+</span></span><span style="display:flex;"><span>    optimiser<span style="color:#f92672">.</span>step()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># We plot the result as training progresses ....................................</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (i<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>) <span style="color:#f92672">%</span> <span style="color:#ae81ff">100</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>:
+</span></span><span style="display:flex;"><span>        loss_history<span style="color:#f92672">.</span>append(loss<span style="color:#f92672">.</span>detach())
+</span></span><span style="display:flex;"><span>        loss2_history<span style="color:#f92672">.</span>append(loss2<span style="color:#f92672">.</span>detach())
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        yh <span style="color:#f92672">=</span> model(t_values<span style="color:#f92672">.</span>unsqueeze(<span style="color:#ae81ff">1</span>))<span style="color:#f92672">.</span>detach()<span style="color:#f92672">.</span>squeeze()
+</span></span><span style="display:flex;"><span>        xp <span style="color:#f92672">=</span> t_physics<span style="color:#f92672">.</span>detach()
+</span></span><span style="display:flex;"><span>        plot_result(t_values, y_values, t_train, y_train, yh, xp)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (i<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>) <span style="color:#f92672">%</span> <span style="color:#ae81ff">6000</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>:
+</span></span><span style="display:flex;"><span>            plt<span style="color:#f92672">.</span>show()
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>            plt<span style="color:#f92672">.</span>close(<span style="color:#e6db74">&#34;all&#34;</span>)
+</span></span></code></pre></div><p><img src="output_8_0.png" alt="png"></p>
+<p><img src="output_8_1.png" alt="png"></p>
+<p><img src="output_8_2.png" alt="png"></p>
+
+        
+    </div>
+
+    <div class="prev-next">
+        
+    </div>
+
+    
+    
+    
+</div>
+
+
+
+    
+
+        </main><footer class="footer">
+    
+    
+
+    
+
+    
+
+    
+</footer></body>
+</html>

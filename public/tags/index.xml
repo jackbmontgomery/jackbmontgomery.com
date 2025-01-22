@@ -15,5 +15,19 @@
       <guid>http://localhost:1313/tags/introduction/</guid>
       <description></description>
     </item>
+    <item>
+      <title>Neural-Networks</title>
+      <link>http://localhost:1313/tags/neural-networks/</link>
+      <pubDate>Wed, 22 Jan 2025 10:36:50 +0200</pubDate>
+      <guid>http://localhost:1313/tags/neural-networks/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Physics</title>
+      <link>http://localhost:1313/tags/physics/</link>
+      <pubDate>Wed, 22 Jan 2025 10:36:50 +0200</pubDate>
+      <guid>http://localhost:1313/tags/physics/</guid>
+      <description></description>
+    </item>
   </channel>
 </rss>
