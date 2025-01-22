@@ -296,6 +296,12 @@ a:hover .feather-sun {
     box-shadow: rgb(220, 220, 220) 0px 1px 5px;
 }
 
+.divider-line {
+    border: 0;
+    color: inherit;
+    border: 1px solid ;
+}
+
 /* TAGS */
 .post-tags {
     list-style-type: none;

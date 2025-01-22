@@ -22,7 +22,7 @@ title = "Jack Montgomery"
 
     newPage = true
 
-    description = "Sky above, sand below and peace within"
+    description = "A personal website about some learnings and interests of mine."
 
     socialIcons = [
     {name = "linkedin", url = "www.linkedin.com/in/jack-b-montgomery"},
