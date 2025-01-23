@@ -1,0 +1,1 @@
+# Cloudflare detects python in the project, but it is not needed to build anything so I just have this file so it installs no packages

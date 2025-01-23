@@ -23,9 +23,5 @@
     <loc>http://localhost:1313/index-about/</loc>
   </url><url>
     <loc>http://localhost:1313/categories/</loc>
-  </url><url>
-    <loc>http://localhost:1313/tags/introduction/</loc>
-  </url><url>
-    <loc>http://localhost:1313/tags/testing/</loc>
   </url>
 </urlset>
