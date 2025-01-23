@@ -6,14 +6,6 @@
     <description>Recent content in Introduction on Jack Montgomery</description>
     <generator>Hugo</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 22 Jan 2025 10:36:50 +0000</lastBuildDate>
     <atom:link href="http://localhost:1313/tags/introduction/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>About</title>
-      <link>http://localhost:1313/posts/about/</link>
-      <pubDate>Wed, 22 Jan 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/posts/about/</guid>
-      <description>&lt;hr&gt;&#xA;&lt;h2 id=&#34;type-post&#34;&gt;date: 2025-01-22T10:36:50+02:00&#xA;lastmod: 2025-01-22&#xA;showTableOfContents: false&#xA;tags: [&amp;ldquo;physics&amp;rdquo;, &amp;ldquo;neural-networks&amp;rdquo;]&#xA;title: &amp;ldquo;Solving ODE&amp;rsquo;s with Physics Informed Neural Networks&amp;rdquo;&#xA;type: &amp;ldquo;post&amp;rdquo;&lt;/h2&gt;&#xA;&lt;hr&gt;&#xA;&lt;h2 id=&#34;type-post-1&#34;&gt;date: 2025-01-23&#xA;lastmod: 2025-01-23T00:36:21&#xA;showTableOfContents: true&#xA;tags: [&amp;ldquo;physics&amp;rdquo;, &amp;ldquo;neural-networks&amp;rdquo;]&#xA;title: &amp;ldquo;Solving Ordinary Differential Equation using Neural Networks&amp;rdquo;&#xA;type: &amp;ldquo;post&amp;rdquo;&lt;/h2&gt;</description>
-    </item>
   </channel>
 </rss>

@@ -141,6 +141,7 @@ img {
 
 .header .header-nav {
     height: 50px;
+    background-color: inherit;
     margin-top: 0;
 }
 

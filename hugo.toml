@@ -25,27 +25,38 @@ title = "Jack Montgomery"
     description = "A personal website about some learnings and interests of mine."
 
     socialIcons = [
-    {name = "linkedin", url = "www.linkedin.com/in/jack-b-montgomery"},
+    {name = "linkedin", url = "https://www.linkedin.com/in/jack-b-montgomery"},
     {name="github", url="https://github.com/jackbmontgomery"},
     {name="email", url="mailto:mail@jackbmontgomery.com"},
   ]
+
+  togglePreviousAndNextButtons = false
 
   math = true
 
 [menu]
   [[menu.main]]
+    name = "Home"
+    url = "/"
+    pre = "<span data-feather='home'></span>"
+    weight = 1
+
+  [[menu.main]]
     name = "Posts"
     url = "/posts/"
-    weight = 1
+    pre = "<span data-feather='book'></span>"
+    weight = 2
 
   [[menu.main]]
     name = "Tags"
     url = "/tags/"
-    weight = 2
+    pre = "<span data-feather='tag'></span>"
+    weight = 3
 
   [[menu.main]]
     name = "CV"
-    url = "pdfs/CV.pdf"
-    weight = 3
+    url = "pdfs/jack_montgomery_cv.pdf"
+    pre = "<span data-feather='file-text' ></span>"
+    weight = 4
     [menu.main.params]
       newPage = true
