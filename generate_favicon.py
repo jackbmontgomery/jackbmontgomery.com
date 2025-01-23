@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.colors import LinearSegmentedColormap
 from PIL import Image
 
 
@@ -25,8 +26,11 @@ def get_members(c, num_iterations):
 c = complex_matrix(-1.5, 0.5, -1, 1, pixel_density=1024)
 
 # Create figure and save initial PNG
+
+custom_cmap = LinearSegmentedColormap.from_list("custom_gray", ["white", "#1F2328"])
+
 plt.figure(figsize=(10, 10))
-plt.imshow(is_stable(c, num_iterations=20), cmap="binary")
+plt.imshow(is_stable(c, num_iterations=20), cmap=custom_cmap)
 plt.gca().set_aspect("equal")
 plt.axis("off")
 plt.tight_layout()
