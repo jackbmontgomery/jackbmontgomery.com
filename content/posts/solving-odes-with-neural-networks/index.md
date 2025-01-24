@@ -1,6 +1,6 @@
 ---
 date: 2025-01-22
-lastmod: 2025-01-24T06:57:09
+lastmod: 2025-01-24T07:03:38
 showTableOfContents: true
 tags: ['physics', 'neural-networks']
 title: "Solving Ordinary Differential Equation using Neural Networks"
