@@ -26,10 +26,14 @@ def build_meta_post_section(date, meta_last_mod, tags, title):
 
 def replace_math_delimiters(text):
     # Replace all $$...$$ first to avoid conflicts with single $
-    text = re.sub(r"\$\$(.*?)\$\$", r"\\[\1\\]", text, flags=re.DOTALL)
+    # text = re.sub(r"\$\$(.*?)\$\$", r"\\[\1\\]", text, flags=re.DOTALL)
 
     # Replace all $...$ afterwards
-    text = re.sub(r"\$(.*?)\$", r"\\(\1\\)", text, flags=re.DOTALL)
+    # text = re.sub(r"\$(.*?)\$", r"\\(\1\\)", text, flags=re.DOTALL)
+
+    text = re.sub(
+        r"(?<!\$)\$(?!\$)(.*?)(?<!\$)\$(?!\$)", r"\\(\1\\)", text, flags=re.DOTALL
+    )
 
     return text
 

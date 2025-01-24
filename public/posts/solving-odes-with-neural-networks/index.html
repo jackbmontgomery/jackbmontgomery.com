@@ -73,8 +73,8 @@
 <script>
     MathJax = {
         tex: {
-            displayMath: [['\\[', '\\]']],  
-            inlineMath: [['\\(', '\\)']]                  
+            displayMath: [['$$', '$$']],
+            inlineMath: [['\\(', '\\)']]
         }
     };
 </script>
@@ -193,17 +193,17 @@
 
     <div class="post-content">
         <h1 id="solving-ordinary-differential-equation-using-neural-networks">Solving Ordinary Differential Equation using Neural Networks</h1>
-<p>Neural networks train based on backpropogated errors signals from the training data. But what if there were some additional constraint on the results of the network that could help the training. When we consider <strong>physical</strong> constraints on the system in order to facilitate learning in the neural network we obtain what is called <strong>physics informed neural networks (PINN)</strong>.</p>
+<p>Neural networks train based on backpropogated errors signals from the training data. But what if there were some additional constraint on the results of the network that could help the training. When we consider <strong>physical</strong> constraints on the system in order to facilitate learning in the neural network we obtain what is called **physics informed neural networks (PINN) **.</p>
 <p>The particular use case we will consider for PINN&rsquo;s is solving ordinary differential equations. This post is inspired by the the work of <a href="https://arxiv.org/abs/2302.12260">Hubert Baty, Leo Baty</a>.</p>
 <p>First Equation to Solve:</p>
-\[
+$$
 \frac{dy}{dt} + 0.1y - \sin (\pi * t/2) = 0 
-\]<p>Solving a differential equation means finding \(y(t)\) such that this equation is satisfied. But, solving differential equations is hard and is mostly impossible. So, we often turn to numerical schemes in order to approximate the solution.</p>
+$$<p>Solving a differential equation means finding \(y(t)\) such that this equation is satisfied. But, solving differential equations is hard and is mostly impossible. So, we often turn to numerical schemes in order to approximate the solution.</p>
 <h2 id="exact-solution-using-numerical-integration">Exact Solution using numerical integration</h2>
 <p>We will use the Runge-Kutta 4 (RK4) as our numerical integrator to plot the trajectory of the solution in \(t \in [0, 30]\). The RK4 method uses the expressed stated as a function of the first derivative, that is:</p>
-\[
+$$
 \frac{dy}{dt} = \sin (\pi * t/2) - 0.1y
-\]<p>With the initial condition: \(y(0) = 1\).</p>
+$$<p>With the initial condition: \(y(0) = 1\).</p>
 <p>Using this, the method then estimates the change in the value of y for a given step size. Let us see this in action:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> matplotlib.pyplot <span style="color:#66d9ef">as</span> plt
 </span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> numpy <span style="color:#66d9ef">as</span> np

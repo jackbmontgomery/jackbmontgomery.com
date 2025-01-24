@@ -1,6 +1,6 @@
 ---
 date: 2025-01-22
-lastmod: 2025-01-24T07:03:38
+lastmod: 2025-01-24T07:10:25
 showTableOfContents: true
 tags: ['physics', 'neural-networks']
 title: "Solving Ordinary Differential Equation using Neural Networks"
@@ -8,15 +8,15 @@ type: "post"
 ---
 # Solving Ordinary Differential Equation using Neural Networks
 
-Neural networks train based on backpropogated errors signals from the training data. But what if there were some additional constraint on the results of the network that could help the training. When we consider **physical** constraints on the system in order to facilitate learning in the neural network we obtain what is called **physics informed neural networks (PINN)**. 
+Neural networks train based on backpropogated errors signals from the training data. But what if there were some additional constraint on the results of the network that could help the training. When we consider **physical** constraints on the system in order to facilitate learning in the neural network we obtain what is called **physics informed neural networks (PINN) **. 
 
 The particular use case we will consider for PINN's is solving ordinary differential equations. This post is inspired by the the work of [Hubert Baty, Leo Baty](https://arxiv.org/abs/2302.12260).
 
 First Equation to Solve:
 
-\[
+$$
 \frac{dy}{dt} + 0.1y - \sin (\pi * t/2) = 0 
-\]
+$$
 
 Solving a differential equation means finding \(y(t)\) such that this equation is satisfied. But, solving differential equations is hard and is mostly impossible. So, we often turn to numerical schemes in order to approximate the solution.
 
@@ -24,9 +24,9 @@ Solving a differential equation means finding \(y(t)\) such that this equation i
 
 We will use the Runge-Kutta 4 (RK4) as our numerical integrator to plot the trajectory of the solution in \(t \in [0, 30]\). The RK4 method uses the expressed stated as a function of the first derivative, that is:
 
-\[
+$$
 \frac{dy}{dt} = \sin (\pi * t/2) - 0.1y
-\]
+$$
 
 With the initial condition: \(y(0) = 1\).
 
