@@ -174,7 +174,7 @@
 
         
         <p class="post-date">January 22, 2025
-             | Updated January 22, 2025
+             | Updated January 24, 2025
         </p>
         
 
@@ -208,7 +208,8 @@
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> matplotlib.pyplot <span style="color:#66d9ef">as</span> plt
 </span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> numpy <span style="color:#66d9ef">as</span> np
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">rk4</span>(f, t, y, h):
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>style<span style="color:#f92672">.</span>use(<span style="color:#e6db74">&#34;ggplot&#34;</span>)
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">rk4</span>(f, t, y, h):
 </span></span><span style="display:flex;"><span>    k1 <span style="color:#f92672">=</span> h <span style="color:#f92672">*</span> f(t, y)
 </span></span><span style="display:flex;"><span>    k2 <span style="color:#f92672">=</span> h <span style="color:#f92672">*</span> f(t <span style="color:#f92672">+</span> h <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>, y <span style="color:#f92672">+</span> k1 <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>)
 </span></span><span style="display:flex;"><span>    k3 <span style="color:#f92672">=</span> h <span style="color:#f92672">*</span> f(t <span style="color:#f92672">+</span> h <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>, y <span style="color:#f92672">+</span> k2 <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>)
@@ -234,7 +235,7 @@
 </span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>ylabel(<span style="color:#e6db74">&#34;y(t)&#34;</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>plot(t_values, y_values)
 </span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>show()
-</span></span></code></pre></div><p><img src="output_2_0.png" alt="png"></p>
+</span></span></code></pre></div><p><img src="output_3_0.png" alt="png"></p>
 <p>This is the exact solution to the differential equation. Well not exact since we have used a numerical integrator, but with a simple, non-chaotic system here integrated over a small time scale we can be pretty confident.</p>
 <p>But is to note is that the only way we can find the solution using this method is to step through the integrator. There is no machine where we can plug in a time and it will spit out the y - like what a function does - we can only tell where the particle will be at time t by starting at time 0 and walking through.</p>
 <h2 id="use-a-neural-network-with-no-physical-information">Use a neural network with no &ldquo;physical&rdquo; information</h2>
@@ -300,10 +301,9 @@
 </span></span><span style="display:flex;"><span>y_train <span style="color:#f92672">=</span> y_values[::<span style="color:#ae81ff">100</span>]
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>torch<span style="color:#f92672">.</span>manual_seed(<span style="color:#ae81ff">123</span>)
 </span></span><span style="display:flex;"><span>model <span style="color:#f92672">=</span> NN()
-</span></span><span style="display:flex;"><span>optimiser <span style="color:#f92672">=</span> optim<span style="color:#f92672">.</span>Adam(model<span style="color:#f92672">.</span>parameters(), lr<span style="color:#f92672">=</span><span style="color:#ae81ff">3e-3</span>)
+</span></span><span style="display:flex;"><span>optimiser <span style="color:#f92672">=</span> optim<span style="color:#f92672">.</span>Adam(model<span style="color:#f92672">.</span>parameters(), lr<span style="color:#f92672">=</span><span style="color:#ae81ff">5e-3</span>)
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>files <span style="color:#f92672">=</span> []
-</span></span><span style="display:flex;"><span>loss11_history <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>loss_history <span style="color:#f92672">=</span> []
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">25000</span>):
 </span></span><span style="display:flex;"><span>    yh <span style="color:#f92672">=</span> model(t_train<span style="color:#f92672">.</span>unsqueeze(<span style="color:#ae81ff">1</span>))<span style="color:#f92672">.</span>squeeze()
@@ -314,35 +314,81 @@
 </span></span><span style="display:flex;"><span>    optimiser<span style="color:#f92672">.</span>step()
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (i <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">%</span> <span style="color:#ae81ff">100</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>:
-</span></span><span style="display:flex;"><span>        loss11_history<span style="color:#f92672">.</span>append(loss<span style="color:#f92672">.</span>detach())
+</span></span><span style="display:flex;"><span>        loss_history<span style="color:#f92672">.</span>append(loss<span style="color:#f92672">.</span>detach())
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (i <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">%</span> <span style="color:#ae81ff">5000</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>:
-</span></span><span style="display:flex;"><span>            yh <span style="color:#f92672">=</span> model(t_values<span style="color:#f92672">.</span>unsqueeze(<span style="color:#ae81ff">1</span>))<span style="color:#f92672">.</span>detach()
+</span></span><span style="display:flex;"><span>yh <span style="color:#f92672">=</span> model(t_values<span style="color:#f92672">.</span>unsqueeze(<span style="color:#ae81ff">1</span>))<span style="color:#f92672">.</span>detach()
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>            plot_result(t_values, y_values, t_train, y_train, yh)
-</span></span><span style="display:flex;"><span>            plt<span style="color:#f92672">.</span>show()
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span>:
-</span></span><span style="display:flex;"><span>            plt<span style="color:#f92672">.</span>close(<span style="color:#e6db74">&#34;all&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Create a single figure with two subplots side by side</span>
+</span></span><span style="display:flex;"><span>fig, axs <span style="color:#f92672">=</span> plt<span style="color:#f92672">.</span>subplots(<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, figsize<span style="color:#f92672">=</span>(<span style="color:#ae81ff">12</span>, <span style="color:#ae81ff">5</span>))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>fig11 <span style="color:#f92672">=</span> plt<span style="color:#f92672">.</span>figure(<span style="color:#ae81ff">11</span>)
-</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>plot(loss11_history)
-</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>xlabel(<span style="color:#e6db74">&#34;Training step (\(10^2\))&#34;</span>, fontsize<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;xx-large&#34;</span>)
-</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>ylabel(<span style="color:#e6db74">&#34;Loss&#34;</span>, fontsize<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;xx-large&#34;</span>)
-</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>yscale(<span style="color:#e6db74">&#34;log&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Plot the model results on the first subplot</span>
+</span></span><span style="display:flex;"><span>axs[<span style="color:#ae81ff">0</span>]<span style="color:#f92672">.</span>plot(t_values, y_values, label<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;True&#34;</span>)
+</span></span><span style="display:flex;"><span>axs[<span style="color:#ae81ff">0</span>]<span style="color:#f92672">.</span>scatter(t_train, y_train, color<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;red&#34;</span>, label<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Train Data&#34;</span>)
+</span></span><span style="display:flex;"><span>axs[<span style="color:#ae81ff">0</span>]<span style="color:#f92672">.</span>plot(t_values, yh, label<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Prediction&#34;</span>, linestyle<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;--&#34;</span>)
+</span></span><span style="display:flex;"><span>axs[<span style="color:#ae81ff">0</span>]<span style="color:#f92672">.</span>set_title(<span style="color:#e6db74">&#34;Model Fit&#34;</span>)
+</span></span><span style="display:flex;"><span>axs[<span style="color:#ae81ff">0</span>]<span style="color:#f92672">.</span>legend()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Plot the loss history on the second subplot</span>
+</span></span><span style="display:flex;"><span>axs[<span style="color:#ae81ff">1</span>]<span style="color:#f92672">.</span>plot(loss_history)
+</span></span><span style="display:flex;"><span>axs[<span style="color:#ae81ff">1</span>]<span style="color:#f92672">.</span>set_xlabel(<span style="color:#e6db74">&#34;Training step (\(10^2\))&#34;</span>, fontsize<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;x-large&#34;</span>)
+</span></span><span style="display:flex;"><span>axs[<span style="color:#ae81ff">1</span>]<span style="color:#f92672">.</span>set_ylabel(<span style="color:#e6db74">&#34;Loss&#34;</span>, fontsize<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;x-large&#34;</span>)
+</span></span><span style="display:flex;"><span>axs[<span style="color:#ae81ff">1</span>]<span style="color:#f92672">.</span>set_yscale(<span style="color:#e6db74">&#34;log&#34;</span>)
+</span></span><span style="display:flex;"><span>axs[<span style="color:#ae81ff">1</span>]<span style="color:#f92672">.</span>set_title(<span style="color:#e6db74">&#34;Training Loss&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>tight_layout()
 </span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>show()
-</span></span></code></pre></div><p><img src="output_8_0.png" alt="png"></p>
-<p><img src="output_8_1.png" alt="png"></p>
-<p><img src="output_8_2.png" alt="png"></p>
-<p><img src="output_8_3.png" alt="png"></p>
-<p><img src="output_8_4.png" alt="png"></p>
-<p><img src="output_8_5.png" alt="png"></p>
+</span></span></code></pre></div><p><img src="output_9_0.png" alt="png"></p>
+<p>As we can see the neural networks settles into a good approximation of the solution of the differential equation just before \(200 \times 10^2\) iterations. Naturally, one can conduct some hyperparameter tuning of the neural network, specifically we will look at different learning rates and their effect on the stability of the solution.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>torch<span style="color:#f92672">.</span>manual_seed(<span style="color:#ae81ff">123</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>learning_rates <span style="color:#f92672">=</span> [<span style="color:#ae81ff">5e-2</span>, <span style="color:#ae81ff">5e-3</span>, <span style="color:#ae81ff">1e-3</span>, <span style="color:#ae81ff">5e-4</span>]
+</span></span><span style="display:flex;"><span>rows, cols <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>, len(learning_rates) <span style="color:#f92672">//</span> <span style="color:#ae81ff">2</span>  <span style="color:#75715e"># Define the grid layout</span>
+</span></span><span style="display:flex;"><span>fig, axs <span style="color:#f92672">=</span> plt<span style="color:#f92672">.</span>subplots(rows, cols, figsize<span style="color:#f92672">=</span>(<span style="color:#ae81ff">12</span>, <span style="color:#ae81ff">6</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>all_loss_histories <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> lr <span style="color:#f92672">in</span> learning_rates:
+</span></span><span style="display:flex;"><span>    model <span style="color:#f92672">=</span> NN()
+</span></span><span style="display:flex;"><span>    optimiser <span style="color:#f92672">=</span> optim<span style="color:#f92672">.</span>Adam(model<span style="color:#f92672">.</span>parameters(), lr<span style="color:#f92672">=</span>lr)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    loss_history <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> j <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">15000</span>):
+</span></span><span style="display:flex;"><span>        yh <span style="color:#f92672">=</span> model(t_train<span style="color:#f92672">.</span>unsqueeze(<span style="color:#ae81ff">1</span>))<span style="color:#f92672">.</span>squeeze()
+</span></span><span style="display:flex;"><span>        loss <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>mean((yh <span style="color:#f92672">-</span> y_train) <span style="color:#f92672">**</span> <span style="color:#ae81ff">2</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        optimiser<span style="color:#f92672">.</span>zero_grad()
+</span></span><span style="display:flex;"><span>        loss<span style="color:#f92672">.</span>backward()
+</span></span><span style="display:flex;"><span>        optimiser<span style="color:#f92672">.</span>step()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (j <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">%</span> <span style="color:#ae81ff">100</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>:
+</span></span><span style="display:flex;"><span>            loss_history<span style="color:#f92672">.</span>append(loss<span style="color:#f92672">.</span>detach())
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    all_loss_histories<span style="color:#f92672">.</span>append(loss_history)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Find global min and max for standardizing y-axis</span>
+</span></span><span style="display:flex;"><span>min_loss <span style="color:#f92672">=</span> min(min(loss) <span style="color:#66d9ef">for</span> loss <span style="color:#f92672">in</span> all_loss_histories)
+</span></span><span style="display:flex;"><span>max_loss <span style="color:#f92672">=</span> max(max(loss) <span style="color:#66d9ef">for</span> loss <span style="color:#f92672">in</span> all_loss_histories)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> idx, (lr, loss_history) <span style="color:#f92672">in</span> enumerate(zip(learning_rates, all_loss_histories)):
+</span></span><span style="display:flex;"><span>    row, col <span style="color:#f92672">=</span> divmod(idx, cols)  <span style="color:#75715e"># Calculate row and column indices</span>
+</span></span><span style="display:flex;"><span>    axs[row, col]<span style="color:#f92672">.</span>plot(loss_history)
+</span></span><span style="display:flex;"><span>    axs[row, col]<span style="color:#f92672">.</span>set_xlabel(<span style="color:#e6db74">&#34;Training step (\(10^2\))&#34;</span>, fontsize<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;x-large&#34;</span>)
+</span></span><span style="display:flex;"><span>    axs[row, col]<span style="color:#f92672">.</span>set_ylabel(<span style="color:#e6db74">&#34;Loss&#34;</span>, fontsize<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;x-large&#34;</span>)
+</span></span><span style="display:flex;"><span>    axs[row, col]<span style="color:#f92672">.</span>set_yscale(<span style="color:#e6db74">&#34;log&#34;</span>)
+</span></span><span style="display:flex;"><span>    axs[row, col]<span style="color:#f92672">.</span>set_ylim(min_loss, max_loss)  <span style="color:#75715e"># Standardize y-axis</span>
+</span></span><span style="display:flex;"><span>    axs[row, col]<span style="color:#f92672">.</span>set_title(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;LR: </span><span style="color:#e6db74">{</span>lr<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>tight_layout()
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>show()
+</span></span></code></pre></div><p><img src="output_11_0.png" alt="png"></p>
 <h2 id="using-a-physical-loss-on-the-neural-network">Using a physical loss on the neural network</h2>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>t_physics <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>linspace(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">30</span>, <span style="color:#ae81ff">50</span>)<span style="color:#f92672">.</span>unsqueeze(<span style="color:#ae81ff">1</span>)<span style="color:#f92672">.</span>requires_grad_(<span style="color:#66d9ef">True</span>)
 </span></span><span style="display:flex;"><span>lam <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.1</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>torch<span style="color:#f92672">.</span>manual_seed(<span style="color:#ae81ff">123</span>)
 </span></span><span style="display:flex;"><span>model <span style="color:#f92672">=</span> NN()
-</span></span><span style="display:flex;"><span>optimiser <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>optim<span style="color:#f92672">.</span>Adam(model<span style="color:#f92672">.</span>parameters(), lr<span style="color:#f92672">=</span><span style="color:#ae81ff">3e-3</span>)
+</span></span><span style="display:flex;"><span>optimiser <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>optim<span style="color:#f92672">.</span>Adam(model<span style="color:#f92672">.</span>parameters(), lr<span style="color:#f92672">=</span><span style="color:#ae81ff">3e-2</span>)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>loss_history <span style="color:#f92672">=</span> []
 </span></span><span style="display:flex;"><span>loss2_history <span style="color:#f92672">=</span> []
@@ -379,11 +425,11 @@
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span>: 
 </span></span><span style="display:flex;"><span>            plt<span style="color:#f92672">.</span>close(<span style="color:#e6db74">&#34;all&#34;</span>)
 </span></span><span style="display:flex;"><span>            
-</span></span></code></pre></div><p><img src="output_10_0.png" alt="png"></p>
-<p><img src="output_10_1.png" alt="png"></p>
-<p><img src="output_10_2.png" alt="png"></p>
-<p><img src="output_10_3.png" alt="png"></p>
-<p><img src="output_10_4.png" alt="png"></p>
+</span></span></code></pre></div><p><img src="output_13_0.png" alt="png"></p>
+<p><img src="output_13_1.png" alt="png"></p>
+<p><img src="output_13_2.png" alt="png"></p>
+<p><img src="output_13_3.png" alt="png"></p>
+<p><img src="output_13_4.png" alt="png"></p>
 
         
     </div>

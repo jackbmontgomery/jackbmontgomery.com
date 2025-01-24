@@ -6,6 +6,7 @@ from datetime import datetime
 from datetime import timezone
 import json
 import argparse
+import shutil
 
 meta_data = """---
 date: 2025-01-22T10:36:50+02:00
@@ -57,6 +58,12 @@ def format_tags(*args):
     return json.dumps(list(args))
 
 
+def create_post_folder(post_directory, post_markdown_file):
+    os.mkdir(post_directory)
+    with open(post_markdown_file, "w"):
+        pass
+
+
 def main(note_book_name, meta_tags):
     post_directory = f"./content/posts/{note_book_name}"
     post_markdown_file = f"{post_directory}/index.md"
@@ -70,9 +77,8 @@ def main(note_book_name, meta_tags):
     now_utc = datetime.now(timezone.utc)
 
     if not os.path.exists(post_directory):
-        os.mkdir(post_directory)
-        with open(post_markdown_file, "w"):
-            pass
+        create_post_folder(post_directory, post_markdown_file)
+
         meta_date = now_utc.strftime("%Y-%m-%d")
 
         if meta_tags is None:
@@ -80,8 +86,13 @@ def main(note_book_name, meta_tags):
     else:
         with open(post_markdown_file, "r") as f:
             content = f.read()
+
         meta_date = extract_existing_date(content)
         meta_tags = extract_existing_tags(content) if meta_tags is None else meta_tags
+
+        shutil.rmtree(post_directory)
+
+        create_post_folder(post_directory, post_markdown_file)
 
     meta_title = extract_title(body)
     meta_last_mod = now_utc.strftime("%Y-%m-%dT%H:%M:%S")

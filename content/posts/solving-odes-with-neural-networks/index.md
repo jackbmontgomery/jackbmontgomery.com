@@ -1,6 +1,6 @@
 ---
 date: 2025-01-22
-lastmod: 2025-01-22T22:46:01
+lastmod: 2025-01-24T06:51:03
 showTableOfContents: true
 tags: ['physics', 'neural-networks']
 title: "Solving Ordinary Differential Equation using Neural Networks"
@@ -38,6 +38,11 @@ Using this, the method then estimates the change in the value of y for a given s
 import matplotlib.pyplot as plt
 import numpy as np
 
+plt.style.use("ggplot")
+```
+
+
+```python
 def rk4(f, t, y, h):
     k1 = h * f(t, y)
     k2 = h * f(t + h / 2, y + k1 / 2)
@@ -68,7 +73,7 @@ plt.show()
 
 
     
-![png](output_2_0.png)
+![png](output_3_0.png)
     
 
 
@@ -152,10 +157,9 @@ y_train = y_values[::100]
 ```python
 torch.manual_seed(123)
 model = NN()
-optimiser = optim.Adam(model.parameters(), lr=3e-3)
+optimiser = optim.Adam(model.parameters(), lr=5e-3)
 
-files = []
-loss11_history = []
+loss_history = []
 
 for i in range(25000):
     yh = model(t_train.unsqueeze(1)).squeeze()
@@ -166,58 +170,89 @@ for i in range(25000):
     optimiser.step()
 
     if (i + 1) % 100 == 0:
-        loss11_history.append(loss.detach())
+        loss_history.append(loss.detach())
 
-        if (i + 1) % 5000 == 0:
-            yh = model(t_values.unsqueeze(1)).detach()
+yh = model(t_values.unsqueeze(1)).detach()
 
-            plot_result(t_values, y_values, t_train, y_train, yh)
-            plt.show()
-        else:
-            plt.close("all")
+# Create a single figure with two subplots side by side
+fig, axs = plt.subplots(1, 2, figsize=(12, 5))
 
-fig11 = plt.figure(11)
-plt.plot(loss11_history)
-plt.xlabel("Training step (\(10^2\))", fontsize="xx-large")
-plt.ylabel("Loss", fontsize="xx-large")
-plt.yscale("log")
+# Plot the model results on the first subplot
+axs[0].plot(t_values, y_values, label="True")
+axs[0].scatter(t_train, y_train, color="red", label="Train Data")
+axs[0].plot(t_values, yh, label="Prediction", linestyle="--")
+axs[0].set_title("Model Fit")
+axs[0].legend()
+
+# Plot the loss history on the second subplot
+axs[1].plot(loss_history)
+axs[1].set_xlabel("Training step (\(10^2\))", fontsize="x-large")
+axs[1].set_ylabel("Loss", fontsize="x-large")
+axs[1].set_yscale("log")
+axs[1].set_title("Training Loss")
+
+plt.tight_layout()
 plt.show()
 
 ```
 
 
     
-![png](output_8_0.png)
+![png](output_9_0.png)
     
 
 
+As we can see the neural networks settles into a good approximation of the solution of the differential equation just before \(200 \times 10^2\) iterations. Naturally, one can conduct some hyperparameter tuning of the neural network, specifically we will look at different learning rates and their effect on the stability of the solution.
+
+
+```python
+torch.manual_seed(123)
+
+learning_rates = [5e-2, 5e-3, 1e-3, 5e-4]
+rows, cols = 2, len(learning_rates) // 2  # Define the grid layout
+fig, axs = plt.subplots(rows, cols, figsize=(12, 6))
+
+all_loss_histories = []
+
+for lr in learning_rates:
+    model = NN()
+    optimiser = optim.Adam(model.parameters(), lr=lr)
+
+    loss_history = []
+
+    for j in range(15000):
+        yh = model(t_train.unsqueeze(1)).squeeze()
+        loss = torch.mean((yh - y_train) ** 2)
+
+        optimiser.zero_grad()
+        loss.backward()
+        optimiser.step()
+
+        if (j + 1) % 100 == 0:
+            loss_history.append(loss.detach())
+
+    all_loss_histories.append(loss_history)
+
+# Find global min and max for standardizing y-axis
+min_loss = min(min(loss) for loss in all_loss_histories)
+max_loss = max(max(loss) for loss in all_loss_histories)
+
+for idx, (lr, loss_history) in enumerate(zip(learning_rates, all_loss_histories)):
+    row, col = divmod(idx, cols)  # Calculate row and column indices
+    axs[row, col].plot(loss_history)
+    axs[row, col].set_xlabel("Training step (\(10^2\))", fontsize="x-large")
+    axs[row, col].set_ylabel("Loss", fontsize="x-large")
+    axs[row, col].set_yscale("log")
+    axs[row, col].set_ylim(min_loss, max_loss)  # Standardize y-axis
+    axs[row, col].set_title(f"LR: {lr}")
+
+plt.tight_layout()
+plt.show()
+```
+
 
     
-![png](output_8_1.png)
-    
-
-
-
-    
-![png](output_8_2.png)
-    
-
-
-
-    
-![png](output_8_3.png)
-    
-
-
-
-    
-![png](output_8_4.png)
-    
-
-
-
-    
-![png](output_8_5.png)
+![png](output_11_0.png)
     
 
 
@@ -230,7 +265,7 @@ lam = 0.1
 
 torch.manual_seed(123)
 model = NN()
-optimiser = torch.optim.Adam(model.parameters(), lr=3e-3)
+optimiser = torch.optim.Adam(model.parameters(), lr=3e-2)
 
 loss_history = []
 loss2_history = []
@@ -272,30 +307,30 @@ for i in range(25000):
 
 
     
-![png](output_10_0.png)
+![png](output_13_0.png)
     
 
 
 
     
-![png](output_10_1.png)
+![png](output_13_1.png)
     
 
 
 
     
-![png](output_10_2.png)
+![png](output_13_2.png)
     
 
 
 
     
-![png](output_10_3.png)
+![png](output_13_3.png)
     
 
 
 
     
-![png](output_10_4.png)
+![png](output_13_4.png)
     
 
