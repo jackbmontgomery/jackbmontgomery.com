@@ -6,14 +6,14 @@
     <description>Recent content in Neural-Networks on Jack Montgomery</description>
     <generator>Hugo</generator>
     <language>en</language>
-    <lastBuildDate>Fri, 24 Jan 2025 07:10:25 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 24 Jan 2025 09:09:37 +0000</lastBuildDate>
     <atom:link href="http://localhost:1313/tags/neural-networks/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Solving Ordinary Differential Equation using Neural Networks</title>
       <link>http://localhost:1313/posts/solving-odes-with-neural-networks/</link>
       <pubDate>Wed, 22 Jan 2025 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/posts/solving-odes-with-neural-networks/</guid>
-      <description>&lt;h1 id=&#34;solving-ordinary-differential-equation-using-neural-networks&#34;&gt;Solving Ordinary Differential Equation using Neural Networks&lt;/h1&gt;&#xA;&lt;p&gt;Neural networks train based on backpropogated errors signals from the training data. But what if there were some additional constraint on the results of the network that could help the training. When we consider &lt;strong&gt;physical&lt;/strong&gt; constraints on the system in order to facilitate learning in the neural network we obtain what is called **physics informed neural networks (PINN) **.&lt;/p&gt;&#xA;&lt;p&gt;The particular use case we will consider for PINN&amp;rsquo;s is solving ordinary differential equations. This post is inspired by the the work of &lt;a href=&#34;https://arxiv.org/abs/2302.12260&#34;&gt;Hubert Baty, Leo Baty&lt;/a&gt;.&lt;/p&gt;</description>
+      <description>&lt;h1 id=&#34;solving-ordinary-differential-equation-using-neural-networks&#34;&gt;Solving Ordinary Differential Equation using Neural Networks&lt;/h1&gt;&#xA;&lt;p&gt;Neural networks train based on backpropogated errors signals from the training data. But what if there were some additional constraint on the results of the network that could help the training. When we consider &lt;strong&gt;physical&lt;/strong&gt; constraints on the system in order to facilitate learning in the neural network we obtain what is called **physics informed neural networks (PINN)whats&#xA;**.&lt;/p&gt;&#xA;&lt;p&gt;The particular use case we will consider for PINN&amp;rsquo;s is solving ordinary differential equations. This post is inspired by the the work of &lt;a href=&#34;https://arxiv.org/abs/2302.12260&#34;&gt;Hubert Baty, Leo Baty&lt;/a&gt;.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

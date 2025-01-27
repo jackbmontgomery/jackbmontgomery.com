@@ -181,11 +181,11 @@
         <ul class="post-tags">
             
             
-            <li class="post-tag"><a href="http://localhost:1313/%20tags/physics">physics</a></li>
+            <li class="post-tag"><a href="http://localhost:1313/tags/physics">physics</a></li>
             
             
             
-            <li class="post-tag"><a href="http://localhost:1313/%20tags/neural-networks">neural-networks</a></li>
+            <li class="post-tag"><a href="http://localhost:1313/tags/neural-networks">neural-networks</a></li>
             
             
         </ul>
@@ -193,7 +193,8 @@
 
     <div class="post-content">
         <h1 id="solving-ordinary-differential-equation-using-neural-networks">Solving Ordinary Differential Equation using Neural Networks</h1>
-<p>Neural networks train based on backpropogated errors signals from the training data. But what if there were some additional constraint on the results of the network that could help the training. When we consider <strong>physical</strong> constraints on the system in order to facilitate learning in the neural network we obtain what is called **physics informed neural networks (PINN) **.</p>
+<p>Neural networks train based on backpropogated errors signals from the training data. But what if there were some additional constraint on the results of the network that could help the training. When we consider <strong>physical</strong> constraints on the system in order to facilitate learning in the neural network we obtain what is called **physics informed neural networks (PINN)whats
+**.</p>
 <p>The particular use case we will consider for PINN&rsquo;s is solving ordinary differential equations. This post is inspired by the the work of <a href="https://arxiv.org/abs/2302.12260">Hubert Baty, Leo Baty</a>.</p>
 <p>First Equation to Solve:</p>
 $$
@@ -205,11 +206,16 @@ $$
 \frac{dy}{dt} = \sin (\pi * t/2) - 0.1y
 $$<p>With the initial condition: \(y(0) = 1\).</p>
 <p>Using this, the method then estimates the change in the value of y for a given step size. Let us see this in action:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> matplotlib.pyplot <span style="color:#66d9ef">as</span> plt
+<details class="details-container">
+    <summary class="details-summary">
+        Code
+    </summary>
+    <div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> matplotlib.pyplot <span style="color:#66d9ef">as</span> plt
 </span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> numpy <span style="color:#66d9ef">as</span> np
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>style<span style="color:#f92672">.</span>use(<span style="color:#e6db74">&#34;ggplot&#34;</span>)
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">rk4</span>(f, t, y, h):
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">rk4</span>(f, t, y, h):
 </span></span><span style="display:flex;"><span>    k1 <span style="color:#f92672">=</span> h <span style="color:#f92672">*</span> f(t, y)
 </span></span><span style="display:flex;"><span>    k2 <span style="color:#f92672">=</span> h <span style="color:#f92672">*</span> f(t <span style="color:#f92672">+</span> h <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>, y <span style="color:#f92672">+</span> k1 <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>)
 </span></span><span style="display:flex;"><span>    k3 <span style="color:#f92672">=</span> h <span style="color:#f92672">*</span> f(t <span style="color:#f92672">+</span> h <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>, y <span style="color:#f92672">+</span> k2 <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>)
@@ -231,16 +237,23 @@ $$<p>With the initial condition: \(y(0) = 1\).</p>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>t_values, y_values <span style="color:#f92672">=</span> solve_ode(dy_dt, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">30</span>, <span style="color:#ae81ff">0.01</span>)
 </span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>figure(figsize<span style="color:#f92672">=</span>(<span style="color:#ae81ff">12</span>, <span style="color:#ae81ff">5</span>))
 </span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>xlabel(<span style="color:#e6db74">&#34;t&#34;</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>ylabel(<span style="color:#e6db74">&#34;y(t)&#34;</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>plot(t_values, y_values)
 </span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>show()
-</span></span></code></pre></div><p><img src="output_3_0.png" alt="png"></p>
+</span></span></code></pre></div></div>
+</details>
+<p><img src="output_2_0.png" alt="png"></p>
 <p>This is the exact solution to the differential equation. Well not exact since we have used a numerical integrator, but with a simple, non-chaotic system here integrated over a small time scale we can be pretty confident.</p>
 <p>But is to note is that the only way we can find the solution using this method is to step through the integrator. There is no machine where we can plug in a time and it will spit out the y - like what a function does - we can only tell where the particle will be at time t by starting at time 0 and walking through.</p>
 <h2 id="use-a-neural-network-with-no-physical-information">Use a neural network with no &ldquo;physical&rdquo; information</h2>
 <p>We can use neural networks as a universal approximator in order to try and learn the solution for \(y(t)\). We can do this by taking a sample of the solution data set that we obtained using numerical integration, and iteratively learning based on these samples. Let us first create a basic neural network using PyTorch as well as a result plotting function.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> torch
+<details class="details-container">
+    <summary class="details-summary">
+        Code
+    </summary>
+    <div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> torch
 </span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> torch.nn <span style="color:#66d9ef">as</span> nn
 </span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> torch.optim <span style="color:#66d9ef">as</span> optim
 </span></span><span style="display:flex;"><span>
@@ -293,13 +306,25 @@ $$<p>With the initial condition: \(y(0) = 1\).</p>
 </span></span><span style="display:flex;"><span>    plt<span style="color:#f92672">.</span>ylabel(<span style="color:#e6db74">&#34;y&#34;</span>, fontsize<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;xx-large&#34;</span>)
 </span></span><span style="display:flex;"><span>    plt<span style="color:#f92672">.</span>xlabel(<span style="color:#e6db74">&#34;t&#34;</span>, fontsize<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;xx-large&#34;</span>)
 </span></span><span style="display:flex;"><span>    plt<span style="color:#f92672">.</span>axis(<span style="color:#e6db74">&#34;on&#34;</span>)
-</span></span></code></pre></div><p>We can now sample our training set.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>t_values <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>Tensor(t_values)
+</span></span></code></pre></div></div>
+</details>
+<p>We can now sample our training set.</p>
+<details class="details-container">
+    <summary class="details-summary">
+        Code
+    </summary>
+    <div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>t_values <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>Tensor(t_values)
 </span></span><span style="display:flex;"><span>y_values <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>Tensor(y_values)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>t_train <span style="color:#f92672">=</span> t_values[::<span style="color:#ae81ff">100</span>]
 </span></span><span style="display:flex;"><span>y_train <span style="color:#f92672">=</span> y_values[::<span style="color:#ae81ff">100</span>]
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>torch<span style="color:#f92672">.</span>manual_seed(<span style="color:#ae81ff">123</span>)
+</span></span></code></pre></div></div>
+</details>
+<details class="details-container">
+    <summary class="details-summary">
+        Code
+    </summary>
+    <div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>torch<span style="color:#f92672">.</span>manual_seed(<span style="color:#ae81ff">123</span>)
 </span></span><span style="display:flex;"><span>model <span style="color:#f92672">=</span> NN()
 </span></span><span style="display:flex;"><span>optimiser <span style="color:#f92672">=</span> optim<span style="color:#f92672">.</span>Adam(model<span style="color:#f92672">.</span>parameters(), lr<span style="color:#f92672">=</span><span style="color:#ae81ff">5e-3</span>)
 </span></span><span style="display:flex;"><span>
@@ -337,9 +362,15 @@ $$<p>With the initial condition: \(y(0) = 1\).</p>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>tight_layout()
 </span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>show()
-</span></span></code></pre></div><p><img src="output_9_0.png" alt="png"></p>
+</span></span></code></pre></div></div>
+</details>
+<p><img src="output_8_0.png" alt="png"></p>
 <p>As we can see the neural networks settles into a good approximation of the solution of the differential equation just before \(200 \times 10^2\) iterations. Naturally, one can conduct some hyperparameter tuning of the neural network, specifically we will look at different learning rates and their effect on the stability of the solution.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>torch<span style="color:#f92672">.</span>manual_seed(<span style="color:#ae81ff">123</span>)
+<details class="details-container">
+    <summary class="details-summary">
+        Code
+    </summary>
+    <div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>torch<span style="color:#f92672">.</span>manual_seed(<span style="color:#ae81ff">123</span>)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>learning_rates <span style="color:#f92672">=</span> [<span style="color:#ae81ff">5e-2</span>, <span style="color:#ae81ff">5e-3</span>, <span style="color:#ae81ff">1e-3</span>, <span style="color:#ae81ff">5e-4</span>]
 </span></span><span style="display:flex;"><span>rows, cols <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>, len(learning_rates) <span style="color:#f92672">//</span> <span style="color:#ae81ff">2</span>  <span style="color:#75715e"># Define the grid layout</span>
@@ -381,9 +412,15 @@ $$<p>With the initial condition: \(y(0) = 1\).</p>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>tight_layout()
 </span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>show()
-</span></span></code></pre></div><p><img src="output_11_0.png" alt="png"></p>
+</span></span></code></pre></div></div>
+</details>
+<p><img src="output_10_0.png" alt="png"></p>
 <h2 id="using-a-physical-loss-on-the-neural-network">Using a physical loss on the neural network</h2>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>t_physics <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>linspace(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">30</span>, <span style="color:#ae81ff">50</span>)<span style="color:#f92672">.</span>unsqueeze(<span style="color:#ae81ff">1</span>)<span style="color:#f92672">.</span>requires_grad_(<span style="color:#66d9ef">True</span>)
+<details class="details-container">
+    <summary class="details-summary">
+        Code
+    </summary>
+    <div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>t_physics <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>linspace(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">30</span>, <span style="color:#ae81ff">50</span>)<span style="color:#f92672">.</span>unsqueeze(<span style="color:#ae81ff">1</span>)<span style="color:#f92672">.</span>requires_grad_(<span style="color:#66d9ef">True</span>)
 </span></span><span style="display:flex;"><span>lam <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.1</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>torch<span style="color:#f92672">.</span>manual_seed(<span style="color:#ae81ff">123</span>)
@@ -424,12 +461,13 @@ $$<p>With the initial condition: \(y(0) = 1\).</p>
 </span></span><span style="display:flex;"><span>            plt<span style="color:#f92672">.</span>show()
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span>: 
 </span></span><span style="display:flex;"><span>            plt<span style="color:#f92672">.</span>close(<span style="color:#e6db74">&#34;all&#34;</span>)
-</span></span><span style="display:flex;"><span>            
-</span></span></code></pre></div><p><img src="output_13_0.png" alt="png"></p>
-<p><img src="output_13_1.png" alt="png"></p>
-<p><img src="output_13_2.png" alt="png"></p>
-<p><img src="output_13_3.png" alt="png"></p>
-<p><img src="output_13_4.png" alt="png"></p>
+</span></span></code></pre></div></div>
+</details>
+<p><img src="output_12_0.png" alt="png"></p>
+<p><img src="output_12_1.png" alt="png"></p>
+<p><img src="output_12_2.png" alt="png"></p>
+<p><img src="output_12_3.png" alt="png"></p>
+<p><img src="output_12_4.png" alt="png"></p>
 
         
     </div>

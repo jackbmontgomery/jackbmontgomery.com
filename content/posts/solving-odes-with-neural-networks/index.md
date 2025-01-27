@@ -1,6 +1,6 @@
 ---
 date: 2025-01-22
-lastmod: 2025-01-24T07:10:25
+lastmod: 2025-01-24T09:09:37
 showTableOfContents: true
 tags: ['physics', 'neural-networks']
 title: "Solving Ordinary Differential Equation using Neural Networks"
@@ -8,7 +8,8 @@ type: "post"
 ---
 # Solving Ordinary Differential Equation using Neural Networks
 
-Neural networks train based on backpropogated errors signals from the training data. But what if there were some additional constraint on the results of the network that could help the training. When we consider **physical** constraints on the system in order to facilitate learning in the neural network we obtain what is called **physics informed neural networks (PINN) **. 
+Neural networks train based on backpropogated errors signals from the training data. But what if there were some additional constraint on the results of the network that could help the training. When we consider **physical** constraints on the system in order to facilitate learning in the neural network we obtain what is called **physics informed neural networks (PINN)whats
+**. 
 
 The particular use case we will consider for PINN's is solving ordinary differential equations. This post is inspired by the the work of [Hubert Baty, Leo Baty](https://arxiv.org/abs/2302.12260).
 
@@ -34,15 +35,13 @@ Using this, the method then estimates the change in the value of y for a given s
 
 
 
+{{< details title="Code" >}}
 ```python
 import matplotlib.pyplot as plt
 import numpy as np
 
 plt.style.use("ggplot")
-```
 
-
-```python
 def rk4(f, t, y, h):
     k1 = h * f(t, y)
     k2 = h * f(t + h / 2, y + k1 / 2)
@@ -65,15 +64,17 @@ def dy_dt(t, y):
 
 t_values, y_values = solve_ode(dy_dt, 0, 1, 30, 0.01)
 
+plt.figure(figsize=(12, 5))
 plt.xlabel("t")
 plt.ylabel("y(t)")
 plt.plot(t_values, y_values)
 plt.show()
 ```
+{{< /details >}}
 
 
     
-![png](output_3_0.png)
+![png](output_2_0.png)
     
 
 
@@ -86,6 +87,7 @@ But is to note is that the only way we can find the solution using this method i
 We can use neural networks as a universal approximator in order to try and learn the solution for \(y(t)\). We can do this by taking a sample of the solution data set that we obtained using numerical integration, and iteratively learning based on these samples. Let us first create a basic neural network using PyTorch as well as a result plotting function.
 
 
+{{< details title="Code" >}}
 ```python
 import torch
 import torch.nn as nn
@@ -141,10 +143,12 @@ def plot_result(x, y, x_data, y_data, yh, xp=None):
     plt.xlabel("t", fontsize="xx-large")
     plt.axis("on")
 ```
+{{< /details >}}
 
 We can now sample our training set.
 
 
+{{< details title="Code" >}}
 ```python
 t_values = torch.Tensor(t_values)
 y_values = torch.Tensor(y_values)
@@ -152,8 +156,10 @@ y_values = torch.Tensor(y_values)
 t_train = t_values[::100]
 y_train = y_values[::100]
 ```
+{{< /details >}}
 
 
+{{< details title="Code" >}}
 ```python
 torch.manual_seed(123)
 model = NN()
@@ -193,18 +199,19 @@ axs[1].set_title("Training Loss")
 
 plt.tight_layout()
 plt.show()
-
 ```
+{{< /details >}}
 
 
     
-![png](output_9_0.png)
+![png](output_8_0.png)
     
 
 
 As we can see the neural networks settles into a good approximation of the solution of the differential equation just before \(200 \times 10^2\) iterations. Naturally, one can conduct some hyperparameter tuning of the neural network, specifically we will look at different learning rates and their effect on the stability of the solution.
 
 
+{{< details title="Code" >}}
 ```python
 torch.manual_seed(123)
 
@@ -249,16 +256,18 @@ for idx, (lr, loss_history) in enumerate(zip(learning_rates, all_loss_histories)
 plt.tight_layout()
 plt.show()
 ```
+{{< /details >}}
 
 
     
-![png](output_11_0.png)
+![png](output_10_0.png)
     
 
 
 ## Using a physical loss on the neural network
 
 
+{{< details title="Code" >}}
 ```python
 t_physics = torch.linspace(0, 30, 50).unsqueeze(1).requires_grad_(True)
 lam = 0.1
@@ -301,36 +310,35 @@ for i in range(25000):
             plt.show()
         else: 
             plt.close("all")
-            
-
 ```
+{{< /details >}}
 
 
     
-![png](output_13_0.png)
-    
-
-
-
-    
-![png](output_13_1.png)
+![png](output_12_0.png)
     
 
 
 
     
-![png](output_13_2.png)
+![png](output_12_1.png)
     
 
 
 
     
-![png](output_13_3.png)
+![png](output_12_2.png)
     
 
 
 
     
-![png](output_13_4.png)
+![png](output_12_3.png)
+    
+
+
+
+    
+![png](output_12_4.png)
     
 

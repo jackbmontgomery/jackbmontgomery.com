@@ -25,17 +25,23 @@ def build_meta_post_section(date, meta_last_mod, tags, title):
 
 
 def replace_math_delimiters(text):
-    # Replace all $$...$$ first to avoid conflicts with single $
-    # text = re.sub(r"\$\$(.*?)\$\$", r"\\[\1\\]", text, flags=re.DOTALL)
-
-    # Replace all $...$ afterwards
-    # text = re.sub(r"\$(.*?)\$", r"\\(\1\\)", text, flags=re.DOTALL)
-
     text = re.sub(
         r"(?<!\$)\$(?!\$)(.*?)(?<!\$)\$(?!\$)", r"\\(\1\\)", text, flags=re.DOTALL
     )
 
     return text
+
+
+def wrap_code_blocks(text):
+    # Regex pattern to find code blocks enclosed by ```
+    pattern = re.compile(r"```(.*?)```", re.DOTALL)
+
+    # Replace code blocks with wrapped Hugo details shortcode
+    def replacer(match):
+        code_content = match.group(1).strip()
+        return f'{{{{< details title="Code" >}}}}\n```{code_content}\n```\n{{{{< /details >}}}}'
+
+    return pattern.sub(replacer, text)
 
 
 def extract_title(text):
@@ -104,7 +110,9 @@ def main(note_book_name, meta_tags):
     meta_data = build_meta_post_section(meta_date, meta_last_mod, meta_tags, meta_title)
 
     with open(post_markdown_file, "w") as f:
-        f.write(replace_math_delimiters(meta_data + body))
+        text = replace_math_delimiters(meta_data + body)
+        text = wrap_code_blocks(text)
+        f.write(text)
 
     # Save images and resources
     for filename, content in resources["outputs"].items():
