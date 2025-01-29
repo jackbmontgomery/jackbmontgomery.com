@@ -3,7 +3,7 @@ defaultContentLanguage = "en"
 # Automatically generate robots.txt
 enableRobotsTXT = true
 languageCode = "en"
-theme = "gokarna"
+theme = ["gokarna", "hugo-video"]
 title = "Jack Montgomery"
 
 [markup]

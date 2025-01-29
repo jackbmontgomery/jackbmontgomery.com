@@ -8,28 +8,15 @@ import json
 import argparse
 import shutil
 
-meta_data = """---
-date: 2025-01-22T10:36:50+02:00
-lastmod: 2025-01-22
-showTableOfContents: false
-tags: ["physics", "neural-networks"]
-title: "Solving ODE's with Physics Informed Neural Networks"
-type: "post"
----
-"""
-
 
 def build_meta_post_section(date, meta_last_mod, tags, title):
     return f'---\ndate: {date}\nlastmod: {meta_last_mod}\nshowTableOfContents: true\ntags: {tags}\ntitle: "{title}"\ntype: "post"\n---\n'
-    # return meta_data
 
 
 def replace_math_delimiters(text):
-    text = re.sub(
+    return re.sub(
         r"(?<!\$)\$(?!\$)(.*?)(?<!\$)\$(?!\$)", r"\\(\1\\)", text, flags=re.DOTALL
     )
-
-    return text
 
 
 def wrap_code_blocks(text):
@@ -42,6 +29,44 @@ def wrap_code_blocks(text):
         return f'{{{{< details title="Code" >}}}}\n```{code_content}\n```\n{{{{< /details >}}}}'
 
     return pattern.sub(replacer, text)
+
+
+def remove_pre_blocks(text):
+    # Remove content inside <pre> tags
+    return re.sub(r"<pre.*?</pre>", "", text, flags=re.DOTALL)
+
+
+def extract_and_copy_video(raw_markdown, destination_directory):
+    # Regex pattern to extract the video file path from the src attribute
+    video_path_pattern = r'<video\s+.*?src="([^"]+)"'
+    match = re.search(video_path_pattern, raw_markdown)
+
+    if not match:
+        print("No video source found in the provided HTML snippet.")
+        return
+
+    video_path = match.group(1)
+
+    # Check if the video file exists
+    if not os.path.exists(f"./notebooks/{video_path}"):
+        raise FileNotFoundError(
+            f"The video file ./notebooks/{video_path} does not exist."
+        )
+
+    # Ensure the destination directory exists
+    os.makedirs(destination_directory, exist_ok=True)
+
+    # Get the video file name and construct the destination path
+    video_filename = os.path.basename(video_path)
+    destination_path = os.path.join(destination_directory, video_filename)
+
+    # Copy the video file to the destination directory
+    shutil.copy(video_path, destination_path)
+
+    print(
+        f"Video file '{video_filename}' successfully copied to '{destination_directory}'."
+    )
+    return destination_path
 
 
 def extract_title(text):
@@ -110,8 +135,10 @@ def main(note_book_name, meta_tags):
     meta_data = build_meta_post_section(meta_date, meta_last_mod, meta_tags, meta_title)
 
     with open(post_markdown_file, "w") as f:
+        # Process and clean up the markdown content
         text = replace_math_delimiters(meta_data + body)
         text = wrap_code_blocks(text)
+        text = remove_pre_blocks(text)  # Remove <pre> blocks
         f.write(text)
 
     # Save images and resources
@@ -119,6 +146,9 @@ def main(note_book_name, meta_tags):
         content_filename = os.path.join(post_directory, filename)
         with open(content_filename, "wb") as f:
             f.write(content)
+
+    # Copy manim generated video and paste it in the page bundle
+    # extract_and_copy_video(text, post_directory)
 
 
 if __name__ == "__main__":
@@ -129,6 +159,7 @@ if __name__ == "__main__":
         type=str,
         help="Specify the notebook name",
         required=True,
+        default="chaos-lorenz-system",
     )
     parser.add_argument("--tags", nargs="+", help="List of tags", required=False)
 

@@ -31,20 +31,20 @@
     
 
     
-    <title>Solving Ordinary Differential Equation using Neural Networks</title>
-    <meta name="description" content="Solving Ordinary Differential Equation using Neural Networks Neural networks train based on backpropogated errors signals from the training data. But what if …">
+    <title>Solving Ordinary Differential Equations Using Neural Networks</title>
+    <meta name="description" content="Solving Ordinary Differential Equations Using Neural Networks Neural networks typically train by backpropagating error signals from the training data. But what …">
     <meta name="keywords" content='physics, neural-networks'>
 
     <meta property="og:url" content="http://localhost:1313/posts/solving-odes-with-neural-networks/">
     <meta property="og:type" content="website">
-    <meta property="og:title" content="Solving Ordinary Differential Equation using Neural Networks">
-    <meta property="og:description" content="Solving Ordinary Differential Equation using Neural Networks Neural networks train based on backpropogated errors signals from the training data. But what if …">
+    <meta property="og:title" content="Solving Ordinary Differential Equations Using Neural Networks">
+    <meta property="og:description" content="Solving Ordinary Differential Equations Using Neural Networks Neural networks typically train by backpropagating error signals from the training data. But what …">
     <meta property="og:image" content="http://localhost:1313/images/profile.webp">
     <meta property="og:image:secure_url" content="http://localhost:1313/images/profile.webp">
 
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Solving Ordinary Differential Equation using Neural Networks">
-    <meta name="twitter:description" content="Solving Ordinary Differential Equation using Neural Networks Neural networks train based on backpropogated errors signals from the training data. But what if …">
+    <meta name="twitter:title" content="Solving Ordinary Differential Equations Using Neural Networks">
+    <meta name="twitter:description" content="Solving Ordinary Differential Equations Using Neural Networks Neural networks typically train by backpropagating error signals from the training data. But what …">
     <meta property="twitter:domain" content="http://localhost:1313/posts/solving-odes-with-neural-networks/">
     <meta property="twitter:url" content="http://localhost:1313/posts/solving-odes-with-neural-networks/">
     <meta name="twitter:image" content="http://localhost:1313/images/profile.webp">
@@ -174,7 +174,7 @@
 
         
         <p class="post-date">January 22, 2025
-             | Updated January 24, 2025
+             | Updated January 29, 2025
         </p>
         
 
@@ -192,26 +192,25 @@
     </div>
 
     <div class="post-content">
-        <h1 id="solving-ordinary-differential-equation-using-neural-networks">Solving Ordinary Differential Equation using Neural Networks</h1>
-<p>Neural networks train based on backpropogated errors signals from the training data. But what if there were some additional constraint on the results of the network that could help the training. When we consider <strong>physical</strong> constraints on the system in order to facilitate learning in the neural network we obtain what is called **physics informed neural networks (PINN)whats
-**.</p>
-<p>The particular use case we will consider for PINN&rsquo;s is solving ordinary differential equations. This post is inspired by the the work of <a href="https://arxiv.org/abs/2302.12260">Hubert Baty, Leo Baty</a>.</p>
-<p>First Equation to Solve:</p>
+        <h1 id="solving-ordinary-differential-equations-using-neural-networks">Solving Ordinary Differential Equations Using Neural Networks</h1>
+<p>Neural networks typically train by backpropagating error signals from the training data. But what if we could impose additional constraints on the network’s output to guide learning? By incorporating <strong>physical</strong> constraints into the training process, we obtain <strong>physics-informed neural networks (PINNs)</strong>.</p>
+<p>In this post, we explore how PINNs can be used to solve ordinary differential equations (ODEs). This discussion is inspired by the work of <a href="https://arxiv.org/abs/2302.12260">Hubert Baty, Leo Baty</a>.</p>
+<h3 id="first-equation-to-solve">First Equation to Solve:</h3>
 $$
-\frac{dy}{dt} + 0.1y - \sin (\pi * t/2) = 0 
-$$<p>Solving a differential equation means finding \(y(t)\) such that this equation is satisfied. But, solving differential equations is hard and is mostly impossible. So, we often turn to numerical schemes in order to approximate the solution.</p>
-<h2 id="exact-solution-using-numerical-integration">Exact Solution using numerical integration</h2>
-<p>We will use the Runge-Kutta 4 (RK4) as our numerical integrator to plot the trajectory of the solution in \(t \in [0, 30]\). The RK4 method uses the expressed stated as a function of the first derivative, that is:</p>
+\frac{dy}{dt} + 0.1y - \sin\left(\frac{\pi t}{2}\right) = 0
+$$<p>Solving a differential equation means finding \( y(t) \) such that the equation holds. However, solving differential equations analytically is often infeasible. As a result, we typically rely on numerical schemes to approximate the solution.</p>
+<h2 id="exact-solution-using-numerical-integration">Exact Solution Using Numerical Integration</h2>
+<p>We will use the Runge-Kutta 4 (RK4) method as our numerical integrator to compute the trajectory of the solution over \( t \in [0, 30] \). The RK4 method approximates solutions by expressing the equation in terms of its first derivative:</p>
 $$
-\frac{dy}{dt} = \sin (\pi * t/2) - 0.1y
-$$<p>With the initial condition: \(y(0) = 1\).</p>
-<p>Using this, the method then estimates the change in the value of y for a given step size. Let us see this in action:</p>
+\frac{dy}{dt} = \sin\left(\frac{\pi t}{2}\right) - 0.1y
+$$<p>with the initial condition \( y(0) = 1 \).</p>
+<p>Using this formulation, the RK4 method estimates the change in \( y \) at each step based on a weighted average of derivative evaluations. Let’s see this in action:</p>
 <details class="details-container">
     <summary class="details-summary">
         Code
     </summary>
     <div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> matplotlib.pyplot <span style="color:#66d9ef">as</span> plt
-</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> numpy <span style="color:#66d9ef">as</span> np
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> torch
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>style<span style="color:#f92672">.</span>use(<span style="color:#e6db74">&#34;ggplot&#34;</span>)
 </span></span><span style="display:flex;"><span>
@@ -222,20 +221,30 @@ $$<p>With the initial condition: \(y(0) = 1\).</p>
 </span></span><span style="display:flex;"><span>    k4 <span style="color:#f92672">=</span> h <span style="color:#f92672">*</span> f(t <span style="color:#f92672">+</span> h, y <span style="color:#f92672">+</span> k3)
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> y <span style="color:#f92672">+</span> (k1 <span style="color:#f92672">+</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> k2 <span style="color:#f92672">+</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> k3 <span style="color:#f92672">+</span> k4) <span style="color:#f92672">/</span> <span style="color:#ae81ff">6</span>
 </span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">solve_ode</span>(f, t0, y0, t_end, h):
-</span></span><span style="display:flex;"><span>    t_values <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>arange(t0, t_end <span style="color:#f92672">+</span> h, h)
-</span></span><span style="display:flex;"><span>    y_values <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>zeros((len(t_values),) <span style="color:#f92672">+</span> np<span style="color:#f92672">.</span>shape(y0))
+</span></span><span style="display:flex;"><span>    t_values <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>arange(t0, t_end <span style="color:#f92672">+</span> h, h)
+</span></span><span style="display:flex;"><span>    y_values <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>zeros((len(t_values),) <span style="color:#f92672">+</span> y0<span style="color:#f92672">.</span>shape, dtype<span style="color:#f92672">=</span>torch<span style="color:#f92672">.</span>float32)
 </span></span><span style="display:flex;"><span>    y_values[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">=</span> y0
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">1</span>, len(t_values)):
 </span></span><span style="display:flex;"><span>        y_values[i] <span style="color:#f92672">=</span> rk4(f, t_values[i <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>], y_values[i <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>], h)
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> t_values, y_values
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> t_values<span style="color:#f92672">.</span>unsqueeze(<span style="color:#ae81ff">1</span>), y_values
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">dy_dt</span>(t, y):
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> np<span style="color:#f92672">.</span>sin(np<span style="color:#f92672">.</span>pi <span style="color:#f92672">*</span> t <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span> ) <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span><span style="color:#f92672">/</span><span style="color:#ae81ff">10</span> <span style="color:#f92672">*</span> y
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> torch<span style="color:#f92672">.</span>sin(torch<span style="color:#f92672">.</span>pi <span style="color:#f92672">*</span> t <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>) <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">10</span> <span style="color:#f92672">*</span> y
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>t_values, y_values <span style="color:#f92672">=</span> solve_ode(dy_dt, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">30</span>, <span style="color:#ae81ff">0.01</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Initial conditions</span>
+</span></span><span style="display:flex;"><span>t0 <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.0</span>
+</span></span><span style="display:flex;"><span>y0 <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>tensor([<span style="color:#ae81ff">1.0</span>], dtype<span style="color:#f92672">=</span>torch<span style="color:#f92672">.</span>float32)
+</span></span><span style="display:flex;"><span>t_end <span style="color:#f92672">=</span> <span style="color:#ae81ff">30.0</span>
+</span></span><span style="display:flex;"><span>h <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.01</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Solve the ODE using RK4 method</span>
+</span></span><span style="display:flex;"><span>t_values, y_values <span style="color:#f92672">=</span> solve_ode(dy_dt, t0, y0, t_end, h)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>figure(figsize<span style="color:#f92672">=</span>(<span style="color:#ae81ff">12</span>, <span style="color:#ae81ff">5</span>))
 </span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>xlabel(<span style="color:#e6db74">&#34;t&#34;</span>)
@@ -245,17 +254,17 @@ $$<p>With the initial condition: \(y(0) = 1\).</p>
 </span></span></code></pre></div></div>
 </details>
 <p><img src="output_2_0.png" alt="png"></p>
-<p>This is the exact solution to the differential equation. Well not exact since we have used a numerical integrator, but with a simple, non-chaotic system here integrated over a small time scale we can be pretty confident.</p>
-<p>But is to note is that the only way we can find the solution using this method is to step through the integrator. There is no machine where we can plug in a time and it will spit out the y - like what a function does - we can only tell where the particle will be at time t by starting at time 0 and walking through.</p>
+<p>This is the exact solution to the differential equation—well, not truly exact, since we’ve used a numerical integrator. However, for a simple, non-chaotic system like this, integrated over a small time scale, we can be quite confident in its accuracy.</p>
+<p>One important limitation to note is that this method requires stepping through the integrator sequentially. There is no function-like mechanism where we can simply input a time and get \( y \) instantly. Instead, we can only determine the state at time \(t\) by starting from \(t = 0\) and iterating forward.</p>
 <h2 id="use-a-neural-network-with-no-physical-information">Use a neural network with no &ldquo;physical&rdquo; information</h2>
-<p>We can use neural networks as a universal approximator in order to try and learn the solution for \(y(t)\). We can do this by taking a sample of the solution data set that we obtained using numerical integration, and iteratively learning based on these samples. Let us first create a basic neural network using PyTorch as well as a result plotting function.</p>
+<p>We can use neural networks as a universal approximator in order to try and learn the solution for \(y(t)\). We can do this by taking a sample of the solution data set that we obtained using numerical integration, and iteratively learning based on these samples.</p>
 <details class="details-container">
     <summary class="details-summary">
         Code
     </summary>
-    <div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> torch
-</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> torch.nn <span style="color:#66d9ef">as</span> nn
+    <div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> torch.nn <span style="color:#66d9ef">as</span> nn
 </span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> torch.optim <span style="color:#66d9ef">as</span> optim
+</span></span><span style="display:flex;"><span>torch<span style="color:#f92672">.</span>manual_seed(<span style="color:#ae81ff">123</span>)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">NN</span>(nn<span style="color:#f92672">.</span>Module):
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> __init__(self, n_input<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>, n_output<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>, hidden_dim<span style="color:#f92672">=</span><span style="color:#ae81ff">32</span>):
@@ -274,75 +283,36 @@ $$<p>With the initial condition: \(y(0) = 1\).</p>
 </span></span><span style="display:flex;"><span>        x <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>activation(x)
 </span></span><span style="display:flex;"><span>        x <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>fc3(x)
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> x
-</span></span><span style="display:flex;"><span>    
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">plot_result</span>(x, y, x_data, y_data, yh, xp<span style="color:#f92672">=</span><span style="color:#66d9ef">None</span>):
-</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;Pretty plot training results&#34;</span>
-</span></span><span style="display:flex;"><span>    plt<span style="color:#f92672">.</span>figure(figsize<span style="color:#f92672">=</span>(<span style="color:#ae81ff">8</span>, <span style="color:#ae81ff">4</span>))
-</span></span><span style="display:flex;"><span>    plt<span style="color:#f92672">.</span>plot(x, yh, color<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;tab:red&#34;</span>, linewidth<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>, alpha<span style="color:#f92672">=</span><span style="color:#ae81ff">0.8</span>, label<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;NN prediction&#34;</span>)
-</span></span><span style="display:flex;"><span>    plt<span style="color:#f92672">.</span>plot(
-</span></span><span style="display:flex;"><span>        x,
-</span></span><span style="display:flex;"><span>        y,
-</span></span><span style="display:flex;"><span>        color<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;blue&#34;</span>,
-</span></span><span style="display:flex;"><span>        linewidth<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>,
-</span></span><span style="display:flex;"><span>        alpha<span style="color:#f92672">=</span><span style="color:#ae81ff">0.8</span>,
-</span></span><span style="display:flex;"><span>        linestyle<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;--&#34;</span>,
-</span></span><span style="display:flex;"><span>        label<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Exact solution&#34;</span>,
-</span></span><span style="display:flex;"><span>    )
-</span></span><span style="display:flex;"><span>    plt<span style="color:#f92672">.</span>scatter(x_data, y_data, s<span style="color:#f92672">=</span><span style="color:#ae81ff">60</span>, color<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;tab:red&#34;</span>, alpha<span style="color:#f92672">=</span><span style="color:#ae81ff">0.4</span>, label<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Training data&#34;</span>)
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> xp <span style="color:#f92672">is</span> <span style="color:#f92672">not</span> <span style="color:#66d9ef">None</span>:
-</span></span><span style="display:flex;"><span>        plt<span style="color:#f92672">.</span>scatter(
-</span></span><span style="display:flex;"><span>            xp,
-</span></span><span style="display:flex;"><span>            <span style="color:#f92672">-</span><span style="color:#ae81ff">0</span> <span style="color:#f92672">*</span> torch<span style="color:#f92672">.</span>ones_like(xp),
-</span></span><span style="display:flex;"><span>            s<span style="color:#f92672">=</span><span style="color:#ae81ff">30</span>,
-</span></span><span style="display:flex;"><span>            color<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;tab:green&#34;</span>,
-</span></span><span style="display:flex;"><span>            alpha<span style="color:#f92672">=</span><span style="color:#ae81ff">0.4</span>,
-</span></span><span style="display:flex;"><span>            label<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Collocation points&#34;</span>,
-</span></span><span style="display:flex;"><span>        )
-</span></span><span style="display:flex;"><span>    leg <span style="color:#f92672">=</span> plt<span style="color:#f92672">.</span>legend(loc<span style="color:#f92672">=</span>(<span style="color:#ae81ff">0.67</span>, <span style="color:#ae81ff">0.62</span>), frameon<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>, fontsize<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;large&#34;</span>)
-</span></span><span style="display:flex;"><span>    plt<span style="color:#f92672">.</span>setp(leg<span style="color:#f92672">.</span>get_texts(), color<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;k&#34;</span>)
-</span></span><span style="display:flex;"><span>    plt<span style="color:#f92672">.</span>xlim(<span style="color:#f92672">-</span><span style="color:#ae81ff">1.25</span>, <span style="color:#ae81ff">31.05</span>)
-</span></span><span style="display:flex;"><span>    plt<span style="color:#f92672">.</span>ylim(<span style="color:#f92672">-</span><span style="color:#ae81ff">0.65</span>, <span style="color:#ae81ff">2.25</span>)
-</span></span><span style="display:flex;"><span>    plt<span style="color:#f92672">.</span>text(<span style="color:#ae81ff">2.965</span>, <span style="color:#ae81ff">1.95</span>, <span style="color:#e6db74">&#34;Training step: </span><span style="color:#e6db74">%i</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">%</span> (i <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>), fontsize<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;xx-large&#34;</span>, color<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;k&#34;</span>)
-</span></span><span style="display:flex;"><span>    plt<span style="color:#f92672">.</span>ylabel(<span style="color:#e6db74">&#34;y&#34;</span>, fontsize<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;xx-large&#34;</span>)
-</span></span><span style="display:flex;"><span>    plt<span style="color:#f92672">.</span>xlabel(<span style="color:#e6db74">&#34;t&#34;</span>, fontsize<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;xx-large&#34;</span>)
-</span></span><span style="display:flex;"><span>    plt<span style="color:#f92672">.</span>axis(<span style="color:#e6db74">&#34;on&#34;</span>)
-</span></span></code></pre></div></div>
-</details>
-<p>We can now sample our training set.</p>
-<details class="details-container">
-    <summary class="details-summary">
-        Code
-    </summary>
-    <div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>t_values <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>Tensor(t_values)
-</span></span><span style="display:flex;"><span>y_values <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>Tensor(y_values)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">train_nn</span>(lr, epochs, t_train, y_train):
+</span></span><span style="display:flex;"><span>    model <span style="color:#f92672">=</span> NN()
+</span></span><span style="display:flex;"><span>    optimiser <span style="color:#f92672">=</span> optim<span style="color:#f92672">.</span>Adam(model<span style="color:#f92672">.</span>parameters(), lr<span style="color:#f92672">=</span>lr)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    loss_history <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(epochs):
+</span></span><span style="display:flex;"><span>        yh <span style="color:#f92672">=</span> model(t_train)
+</span></span><span style="display:flex;"><span>        loss <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>mean((yh <span style="color:#f92672">-</span> y_train) <span style="color:#f92672">**</span> <span style="color:#ae81ff">2</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        optimiser<span style="color:#f92672">.</span>zero_grad()
+</span></span><span style="display:flex;"><span>        loss<span style="color:#f92672">.</span>backward()
+</span></span><span style="display:flex;"><span>        optimiser<span style="color:#f92672">.</span>step()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (i <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">%</span> <span style="color:#ae81ff">100</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>:
+</span></span><span style="display:flex;"><span>            loss_history<span style="color:#f92672">.</span>append(loss<span style="color:#f92672">.</span>detach())
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">with</span> torch<span style="color:#f92672">.</span>no_grad():
+</span></span><span style="display:flex;"><span>        yh <span style="color:#f92672">=</span> model(t_values)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> yh, loss_history
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>lr <span style="color:#f92672">=</span> <span style="color:#ae81ff">5e-3</span>
+</span></span><span style="display:flex;"><span>epochs <span style="color:#f92672">=</span> <span style="color:#ae81ff">25000</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>t_train <span style="color:#f92672">=</span> t_values[::<span style="color:#ae81ff">100</span>]
 </span></span><span style="display:flex;"><span>y_train <span style="color:#f92672">=</span> y_values[::<span style="color:#ae81ff">100</span>]
-</span></span></code></pre></div></div>
-</details>
-<details class="details-container">
-    <summary class="details-summary">
-        Code
-    </summary>
-    <div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>torch<span style="color:#f92672">.</span>manual_seed(<span style="color:#ae81ff">123</span>)
-</span></span><span style="display:flex;"><span>model <span style="color:#f92672">=</span> NN()
-</span></span><span style="display:flex;"><span>optimiser <span style="color:#f92672">=</span> optim<span style="color:#f92672">.</span>Adam(model<span style="color:#f92672">.</span>parameters(), lr<span style="color:#f92672">=</span><span style="color:#ae81ff">5e-3</span>)
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>loss_history <span style="color:#f92672">=</span> []
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">25000</span>):
-</span></span><span style="display:flex;"><span>    yh <span style="color:#f92672">=</span> model(t_train<span style="color:#f92672">.</span>unsqueeze(<span style="color:#ae81ff">1</span>))<span style="color:#f92672">.</span>squeeze()
-</span></span><span style="display:flex;"><span>    loss <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>mean((yh <span style="color:#f92672">-</span> y_train) <span style="color:#f92672">**</span> <span style="color:#ae81ff">2</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    optimiser<span style="color:#f92672">.</span>zero_grad()
-</span></span><span style="display:flex;"><span>    loss<span style="color:#f92672">.</span>backward()
-</span></span><span style="display:flex;"><span>    optimiser<span style="color:#f92672">.</span>step()
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (i <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">%</span> <span style="color:#ae81ff">100</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>:
-</span></span><span style="display:flex;"><span>        loss_history<span style="color:#f92672">.</span>append(loss<span style="color:#f92672">.</span>detach())
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>yh <span style="color:#f92672">=</span> model(t_values<span style="color:#f92672">.</span>unsqueeze(<span style="color:#ae81ff">1</span>))<span style="color:#f92672">.</span>detach()
-</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>yh, loss_history <span style="color:#f92672">=</span> train_nn(lr, epochs, t_train, y_train)
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># Create a single figure with two subplots side by side</span>
 </span></span><span style="display:flex;"><span>fig, axs <span style="color:#f92672">=</span> plt<span style="color:#f92672">.</span>subplots(<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, figsize<span style="color:#f92672">=</span>(<span style="color:#ae81ff">12</span>, <span style="color:#ae81ff">5</span>))
 </span></span><span style="display:flex;"><span>
@@ -364,36 +334,20 @@ $$<p>With the initial condition: \(y(0) = 1\).</p>
 </span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>show()
 </span></span></code></pre></div></div>
 </details>
-<p><img src="output_8_0.png" alt="png"></p>
-<p>As we can see the neural networks settles into a good approximation of the solution of the differential equation just before \(200 \times 10^2\) iterations. Naturally, one can conduct some hyperparameter tuning of the neural network, specifically we will look at different learning rates and their effect on the stability of the solution.</p>
+<p><img src="output_5_0.png" alt="png"></p>
+<p>As we can see, the neural network converges to a good approximation of the differential equation’s solution just before 15,000 training epochs. Naturally, we can further refine the performance through hyperparameter tuning. In particular, we will examine different learning rates and their impact on the stability of the solution.</p>
 <details class="details-container">
     <summary class="details-summary">
         Code
     </summary>
-    <div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>torch<span style="color:#f92672">.</span>manual_seed(<span style="color:#ae81ff">123</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>learning_rates <span style="color:#f92672">=</span> [<span style="color:#ae81ff">5e-2</span>, <span style="color:#ae81ff">5e-3</span>, <span style="color:#ae81ff">1e-3</span>, <span style="color:#ae81ff">5e-4</span>]
+    <div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>learning_rates <span style="color:#f92672">=</span> [<span style="color:#ae81ff">5e-2</span>, <span style="color:#ae81ff">5e-3</span>, <span style="color:#ae81ff">1e-3</span>, <span style="color:#ae81ff">5e-4</span>]
 </span></span><span style="display:flex;"><span>rows, cols <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>, len(learning_rates) <span style="color:#f92672">//</span> <span style="color:#ae81ff">2</span>  <span style="color:#75715e"># Define the grid layout</span>
-</span></span><span style="display:flex;"><span>fig, axs <span style="color:#f92672">=</span> plt<span style="color:#f92672">.</span>subplots(rows, cols, figsize<span style="color:#f92672">=</span>(<span style="color:#ae81ff">12</span>, <span style="color:#ae81ff">6</span>))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>all_loss_histories <span style="color:#f92672">=</span> []
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> lr <span style="color:#f92672">in</span> learning_rates:
-</span></span><span style="display:flex;"><span>    model <span style="color:#f92672">=</span> NN()
-</span></span><span style="display:flex;"><span>    optimiser <span style="color:#f92672">=</span> optim<span style="color:#f92672">.</span>Adam(model<span style="color:#f92672">.</span>parameters(), lr<span style="color:#f92672">=</span>lr)
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    loss_history <span style="color:#f92672">=</span> []
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> j <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">15000</span>):
-</span></span><span style="display:flex;"><span>        yh <span style="color:#f92672">=</span> model(t_train<span style="color:#f92672">.</span>unsqueeze(<span style="color:#ae81ff">1</span>))<span style="color:#f92672">.</span>squeeze()
-</span></span><span style="display:flex;"><span>        loss <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>mean((yh <span style="color:#f92672">-</span> y_train) <span style="color:#f92672">**</span> <span style="color:#ae81ff">2</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        optimiser<span style="color:#f92672">.</span>zero_grad()
-</span></span><span style="display:flex;"><span>        loss<span style="color:#f92672">.</span>backward()
-</span></span><span style="display:flex;"><span>        optimiser<span style="color:#f92672">.</span>step()
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (j <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">%</span> <span style="color:#ae81ff">100</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>:
-</span></span><span style="display:flex;"><span>            loss_history<span style="color:#f92672">.</span>append(loss<span style="color:#f92672">.</span>detach())
+</span></span><span style="display:flex;"><span>    yh, loss_history <span style="color:#f92672">=</span> train_nn(lr, <span style="color:#ae81ff">15000</span>, t_train, y_train)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    all_loss_histories<span style="color:#f92672">.</span>append(loss_history)
 </span></span><span style="display:flex;"><span>
@@ -401,6 +355,9 @@ $$<p>With the initial condition: \(y(0) = 1\).</p>
 </span></span><span style="display:flex;"><span>min_loss <span style="color:#f92672">=</span> min(min(loss) <span style="color:#66d9ef">for</span> loss <span style="color:#f92672">in</span> all_loss_histories)
 </span></span><span style="display:flex;"><span>max_loss <span style="color:#f92672">=</span> max(max(loss) <span style="color:#66d9ef">for</span> loss <span style="color:#f92672">in</span> all_loss_histories)
 </span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Plot results</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>fig, axs <span style="color:#f92672">=</span> plt<span style="color:#f92672">.</span>subplots(rows, cols, figsize<span style="color:#f92672">=</span>(<span style="color:#ae81ff">12</span>, <span style="color:#ae81ff">6</span>))
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> idx, (lr, loss_history) <span style="color:#f92672">in</span> enumerate(zip(learning_rates, all_loss_histories)):
 </span></span><span style="display:flex;"><span>    row, col <span style="color:#f92672">=</span> divmod(idx, cols)  <span style="color:#75715e"># Calculate row and column indices</span>
 </span></span><span style="display:flex;"><span>    axs[row, col]<span style="color:#f92672">.</span>plot(loss_history)
@@ -414,60 +371,127 @@ $$<p>With the initial condition: \(y(0) = 1\).</p>
 </span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>show()
 </span></span></code></pre></div></div>
 </details>
-<p><img src="output_10_0.png" alt="png"></p>
-<h2 id="using-a-physical-loss-on-the-neural-network">Using a physical loss on the neural network</h2>
+<p><img src="output_7_0.png" alt="png"></p>
+<p>Admittedly, this is not an extensive hyperparameter tuning process, but the key takeaway is that training is highly sensitive to the learning rate—just as with standard neural networks. A learning rate that is too large can prevent training altogether.</p>
+<h2 id="using-a-physical-loss-in-the-neural-network">Using a Physical Loss in the Neural Network</h2>
+<p>So far, we have trained a neural network using data generated from the solution to the ODE, allowing it to approximate the underlying function. While this works, it presents a fundamental chicken-and-egg problem: we need data from the solution in order to approximate the solution. Although real-world data from physical processes is available in some cases, our goal is to solve the ODE without relying on data, instead using the constraints of the equation itself.</p>
+<p>The given ODE is:</p>
+$$  
+\frac{dy}{dt} + 0.1y - \sin\left(\frac{\pi t}{2}\right) = 0  
+$$<p>We can incorporate this constraint into training by treating the first-order derivative as a form of regularization. Specifically, we want to avoid updating the neural network’s parameters in a way that causes</p>
+$$  
+\mathcal{F} = \frac{dy}{dt} + 0.1y - \sin\left(\frac{\pi t}{2}\right)  
+$$<p>to deviate significantly from zero. This requires computing derivatives at specific points in the training process. These points are known as <strong>collocation points</strong>.</p>
+<h3 id="collocation-points-vs-training-points">Collocation Points vs. Training Points</h3>
+<p>A <strong>training point</strong> is an instance derived from the function we aim to approximate. In contrast, a <strong>collocation point</strong> is simply a time value where we evaluate \(\mathcal{F}\).</p>
+<p>We now define a loss function that combines both standard training loss and the loss at collocation points:</p>
+$$  
+L(\theta) = \omega_{\text{data}} L_{\text{data}}(\theta) + w_{\mathcal{F}} L_{\mathcal{F}}(\theta)  
+$$<p>where</p>
+$$  
+L_{\mathcal{F}}(\theta) = \left\| \frac{dy_\theta}{dt} + 0.1y_\theta - \sin\left(\frac{\pi t}{2}\right) \right\|.  
+$$<details class="details-container">
+    <summary class="details-summary">
+        Code
+    </summary>
+    <div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">train_pinn</span>(lr, epochs, t_train, y_train, p_train):
+</span></span><span style="display:flex;"><span>    model <span style="color:#f92672">=</span> NN()
+</span></span><span style="display:flex;"><span>    optimiser <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>optim<span style="color:#f92672">.</span>Adam(model<span style="color:#f92672">.</span>parameters(), lr<span style="color:#f92672">=</span>lr)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    loss_history <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>    physics_loss_history <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(epochs):
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># Prediction Loss</span>
+</span></span><span style="display:flex;"><span>        yh <span style="color:#f92672">=</span> model(t_train)
+</span></span><span style="display:flex;"><span>        pred_loss <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>mean((yh <span style="color:#f92672">-</span> y_train) <span style="color:#f92672">**</span> <span style="color:#ae81ff">2</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        yhp <span style="color:#f92672">=</span> model(p_train)
+</span></span><span style="display:flex;"><span>        dx <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>autograd<span style="color:#f92672">.</span>grad(yhp, p_train, torch<span style="color:#f92672">.</span>ones_like(yhp), create_graph<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)[
+</span></span><span style="display:flex;"><span>            <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>        ]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        cal_F <span style="color:#f92672">=</span> dx <span style="color:#f92672">+</span> <span style="color:#ae81ff">0.1</span> <span style="color:#f92672">*</span> yhp <span style="color:#f92672">-</span> torch<span style="color:#f92672">.</span>sin(torch<span style="color:#f92672">.</span>pi <span style="color:#f92672">*</span> p_train <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>)
+</span></span><span style="display:flex;"><span>        physics_loss <span style="color:#f92672">=</span> (<span style="color:#ae81ff">6e-2</span>) <span style="color:#f92672">*</span> (torch<span style="color:#f92672">.</span>mean(cal_F<span style="color:#f92672">**</span><span style="color:#ae81ff">2</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        loss <span style="color:#f92672">=</span> pred_loss <span style="color:#f92672">+</span> physics_loss
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        optimiser<span style="color:#f92672">.</span>zero_grad()
+</span></span><span style="display:flex;"><span>        loss<span style="color:#f92672">.</span>backward()
+</span></span><span style="display:flex;"><span>        optimiser<span style="color:#f92672">.</span>step()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (i<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>) <span style="color:#f92672">%</span> <span style="color:#ae81ff">100</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>:
+</span></span><span style="display:flex;"><span>            loss_history<span style="color:#f92672">.</span>append(loss<span style="color:#f92672">.</span>detach())
+</span></span><span style="display:flex;"><span>            physics_loss_history<span style="color:#f92672">.</span>append(physics_loss<span style="color:#f92672">.</span>detach())
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">with</span> torch<span style="color:#f92672">.</span>no_grad():
+</span></span><span style="display:flex;"><span>        yh <span style="color:#f92672">=</span> model(t_values)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> yh, loss_history, physics_loss_history
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>p_train <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>linspace(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">30</span>, <span style="color:#ae81ff">50</span>)<span style="color:#f92672">.</span>unsqueeze(<span style="color:#ae81ff">1</span>)<span style="color:#f92672">.</span>requires_grad_(<span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>p_train_zeros <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>zeros_like(p_train)<span style="color:#f92672">.</span>detach()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>yh, loss_history, physics_loss_history <span style="color:#f92672">=</span> train_pinn(<span style="color:#ae81ff">3e-2</span>, <span style="color:#ae81ff">15000</span>, t_train, y_train, p_train)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>fig, axs <span style="color:#f92672">=</span> plt<span style="color:#f92672">.</span>subplots(<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, figsize<span style="color:#f92672">=</span>(<span style="color:#ae81ff">12</span>, <span style="color:#ae81ff">5</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>axs[<span style="color:#ae81ff">0</span>]<span style="color:#f92672">.</span>plot(t_values, y_values, label<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;True&#34;</span>)
+</span></span><span style="display:flex;"><span>axs[<span style="color:#ae81ff">0</span>]<span style="color:#f92672">.</span>scatter(t_train, y_train, label<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Train Data&#34;</span>)
+</span></span><span style="display:flex;"><span>axs[<span style="color:#ae81ff">0</span>]<span style="color:#f92672">.</span>scatter(p_train<span style="color:#f92672">.</span>detach(), p_train_zeros, label<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Collocation Data&#34;</span>)
+</span></span><span style="display:flex;"><span>axs[<span style="color:#ae81ff">0</span>]<span style="color:#f92672">.</span>plot(t_values, yh, label<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Prediction&#34;</span>, linestyle<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;--&#34;</span>)
+</span></span><span style="display:flex;"><span>axs[<span style="color:#ae81ff">0</span>]<span style="color:#f92672">.</span>set_title(<span style="color:#e6db74">&#34;Model Fit&#34;</span>)
+</span></span><span style="display:flex;"><span>axs[<span style="color:#ae81ff">0</span>]<span style="color:#f92672">.</span>legend()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>axs[<span style="color:#ae81ff">1</span>]<span style="color:#f92672">.</span>plot(loss_history)
+</span></span><span style="display:flex;"><span>axs[<span style="color:#ae81ff">1</span>]<span style="color:#f92672">.</span>set_xlabel(<span style="color:#e6db74">&#34;Training step (\(10^2\))&#34;</span>, fontsize<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;x-large&#34;</span>)
+</span></span><span style="display:flex;"><span>axs[<span style="color:#ae81ff">1</span>]<span style="color:#f92672">.</span>set_ylabel(<span style="color:#e6db74">&#34;Loss&#34;</span>, fontsize<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;x-large&#34;</span>)
+</span></span><span style="display:flex;"><span>axs[<span style="color:#ae81ff">1</span>]<span style="color:#f92672">.</span>set_yscale(<span style="color:#e6db74">&#34;log&#34;</span>)
+</span></span><span style="display:flex;"><span>axs[<span style="color:#ae81ff">1</span>]<span style="color:#f92672">.</span>set_title(<span style="color:#e6db74">&#34;Training Loss&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>tight_layout()
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>show()
+</span></span></code></pre></div></div>
+</details>
+<p><img src="output_9_0.png" alt="png"></p>
+<p>The first key observation is that incorporating the physical loss into training has allowed us to increase the learning rate from \(0.005\) to \(0.03\). As a result, the neural network converges to a good approximation of the solution in just <strong>4000 iterations</strong>. However, a fundamental issue remains: the neural network still relies on data from the true solution to train.</p>
+<p>The final challenge for the <strong>Physics-Informed Neural Network (PINN)</strong> is to eliminate this dependency entirely. Instead of using solution data, the goal is to train the network using only the <strong>initial conditions</strong> of the problem and the <strong>collocation points</strong> derived from the governing differential equation. By doing so, the PINN can learn an approximation of the true solution without requiring any precomputed training data.</p>
 <details class="details-container">
     <summary class="details-summary">
         Code
     </summary>
-    <div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>t_physics <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>linspace(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">30</span>, <span style="color:#ae81ff">50</span>)<span style="color:#f92672">.</span>unsqueeze(<span style="color:#ae81ff">1</span>)<span style="color:#f92672">.</span>requires_grad_(<span style="color:#66d9ef">True</span>)
-</span></span><span style="display:flex;"><span>lam <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.1</span>
+    <div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>initial_x, initial_y <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>Tensor([[<span style="color:#ae81ff">0</span>]]), torch<span style="color:#f92672">.</span>Tensor([[<span style="color:#ae81ff">1</span>]])
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>torch<span style="color:#f92672">.</span>manual_seed(<span style="color:#ae81ff">123</span>)
-</span></span><span style="display:flex;"><span>model <span style="color:#f92672">=</span> NN()
-</span></span><span style="display:flex;"><span>optimiser <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>optim<span style="color:#f92672">.</span>Adam(model<span style="color:#f92672">.</span>parameters(), lr<span style="color:#f92672">=</span><span style="color:#ae81ff">3e-2</span>)
+</span></span><span style="display:flex;"><span>yh, loss_history, physics_loss_history <span style="color:#f92672">=</span>  train_pinn(
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">5e-3</span>, <span style="color:#ae81ff">50000</span>, initial_x, initial_y, p_train
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>fig, axs <span style="color:#f92672">=</span> plt<span style="color:#f92672">.</span>subplots(<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, figsize<span style="color:#f92672">=</span>(<span style="color:#ae81ff">12</span>, <span style="color:#ae81ff">5</span>))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>loss_history <span style="color:#f92672">=</span> []
-</span></span><span style="display:flex;"><span>loss2_history <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>axs[<span style="color:#ae81ff">0</span>]<span style="color:#f92672">.</span>plot(t_values, y_values, label<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;True&#34;</span>)
+</span></span><span style="display:flex;"><span>axs[<span style="color:#ae81ff">0</span>]<span style="color:#f92672">.</span>scatter(initial_x, initial_y, label<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Train Data&#34;</span>)
+</span></span><span style="display:flex;"><span>axs[<span style="color:#ae81ff">0</span>]<span style="color:#f92672">.</span>scatter(p_train<span style="color:#f92672">.</span>detach(), p_train_zeros, label<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Collocation Data&#34;</span>)
+</span></span><span style="display:flex;"><span>axs[<span style="color:#ae81ff">0</span>]<span style="color:#f92672">.</span>plot(t_values, yh, label<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Prediction&#34;</span>, linestyle<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;--&#34;</span>)
+</span></span><span style="display:flex;"><span>axs[<span style="color:#ae81ff">0</span>]<span style="color:#f92672">.</span>set_title(<span style="color:#e6db74">&#34;Model Fit&#34;</span>)
+</span></span><span style="display:flex;"><span>axs[<span style="color:#ae81ff">0</span>]<span style="color:#f92672">.</span>legend()
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">25000</span>):
+</span></span><span style="display:flex;"><span>axs[<span style="color:#ae81ff">1</span>]<span style="color:#f92672">.</span>plot(loss_history)
+</span></span><span style="display:flex;"><span>axs[<span style="color:#ae81ff">1</span>]<span style="color:#f92672">.</span>set_xlabel(<span style="color:#e6db74">&#34;Training step (\(10^2\))&#34;</span>, fontsize<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;x-large&#34;</span>)
+</span></span><span style="display:flex;"><span>axs[<span style="color:#ae81ff">1</span>]<span style="color:#f92672">.</span>set_ylabel(<span style="color:#e6db74">&#34;Loss&#34;</span>, fontsize<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;x-large&#34;</span>)
+</span></span><span style="display:flex;"><span>axs[<span style="color:#ae81ff">1</span>]<span style="color:#f92672">.</span>set_yscale(<span style="color:#e6db74">&#34;log&#34;</span>)
+</span></span><span style="display:flex;"><span>axs[<span style="color:#ae81ff">1</span>]<span style="color:#f92672">.</span>set_title(<span style="color:#e6db74">&#34;Training Loss&#34;</span>)
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    optimiser<span style="color:#f92672">.</span>zero_grad()
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    yh <span style="color:#f92672">=</span> model(t_train<span style="color:#f92672">.</span>unsqueeze(<span style="color:#ae81ff">1</span>))<span style="color:#f92672">.</span>squeeze()
-</span></span><span style="display:flex;"><span>    loss1 <span style="color:#f92672">=</span> <span style="color:#ae81ff">1.</span><span style="color:#f92672">*</span>torch<span style="color:#f92672">.</span>mean((yh<span style="color:#f92672">-</span>y_train)<span style="color:#f92672">**</span><span style="color:#ae81ff">2</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    yhp <span style="color:#f92672">=</span> model(t_physics<span style="color:#f92672">.</span>unsqueeze(<span style="color:#ae81ff">1</span>))<span style="color:#f92672">.</span>squeeze()
-</span></span><span style="display:flex;"><span>    dx <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>autograd<span style="color:#f92672">.</span>grad(yhp, t_physics, torch<span style="color:#f92672">.</span>ones_like(yhp), create_graph<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)[<span style="color:#ae81ff">0</span>]
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    physics <span style="color:#f92672">=</span> dx <span style="color:#f92672">+</span> lam <span style="color:#f92672">*</span> yhp <span style="color:#f92672">-</span> torch<span style="color:#f92672">.</span>sin(np<span style="color:#f92672">.</span>pi <span style="color:#f92672">*</span> t_physics <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>)
-</span></span><span style="display:flex;"><span>    loss2 <span style="color:#f92672">=</span> (<span style="color:#ae81ff">6e-2</span>) <span style="color:#f92672">*</span> (torch<span style="color:#f92672">.</span>mean(physics<span style="color:#f92672">**</span><span style="color:#ae81ff">2</span>))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    loss <span style="color:#f92672">=</span> loss1 <span style="color:#f92672">+</span> loss2
-</span></span><span style="display:flex;"><span>    loss<span style="color:#f92672">.</span>backward()
-</span></span><span style="display:flex;"><span>    optimiser<span style="color:#f92672">.</span>step()
-</span></span><span style="display:flex;"><span>    
-</span></span><span style="display:flex;"><span>    
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># We plot the result as training progresses ....................................</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (i<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>) <span style="color:#f92672">%</span> <span style="color:#ae81ff">100</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>:
-</span></span><span style="display:flex;"><span>        loss_history<span style="color:#f92672">.</span>append(loss<span style="color:#f92672">.</span>detach())
-</span></span><span style="display:flex;"><span>        loss2_history<span style="color:#f92672">.</span>append(loss2<span style="color:#f92672">.</span>detach())
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>                
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (i<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>) <span style="color:#f92672">%</span> <span style="color:#ae81ff">5000</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>: 
-</span></span><span style="display:flex;"><span>            yh <span style="color:#f92672">=</span> model(t_values<span style="color:#f92672">.</span>unsqueeze(<span style="color:#ae81ff">1</span>))<span style="color:#f92672">.</span>detach()<span style="color:#f92672">.</span>squeeze()
-</span></span><span style="display:flex;"><span>            xp <span style="color:#f92672">=</span> t_physics<span style="color:#f92672">.</span>detach()        
-</span></span><span style="display:flex;"><span>            plot_result(t_values, y_values, t_train, y_train, yh, xp)
-</span></span><span style="display:flex;"><span>            plt<span style="color:#f92672">.</span>show()
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span>: 
-</span></span><span style="display:flex;"><span>            plt<span style="color:#f92672">.</span>close(<span style="color:#e6db74">&#34;all&#34;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>tight_layout()
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>show()
 </span></span></code></pre></div></div>
 </details>
-<p><img src="output_12_0.png" alt="png"></p>
-<p><img src="output_12_1.png" alt="png"></p>
-<p><img src="output_12_2.png" alt="png"></p>
-<p><img src="output_12_3.png" alt="png"></p>
-<p><img src="output_12_4.png" alt="png"></p>
+<p><img src="output_11_0.png" alt="png"></p>
+<h2 id="conclusion">Conclusion</h2>
+<p>In this post, we explored how <strong>Physics-Informed Neural Networks (PINNs)</strong> can be used to solve ordinary differential equations by embedding physical constraints directly into the learning process. Initially, we trained a neural network using data generated from the true solution of the ODE, but this approach required access to the solution beforehand—defeating the purpose of solving the equation in the first place.</p>
+<p>By incorporating a <strong>physics-based loss function</strong>, we allowed the network to learn in a way that respects the structure of the differential equation itself. This not only improved convergence but also enabled us to increase the learning rate, significantly reducing the number of training iterations required.</p>
+<p>Most importantly, we demonstrated that a PINN can successfully approximate the solution <strong>using only the initial condition and collocation points</strong>, without needing any data from the true solution. This highlights the power of physics-informed learning: instead of relying on large datasets, the network leverages fundamental governing equations to infer an accurate solution.</p>
+<p>The success of PINNs in this simple ODE example suggests their potential for solving more complex differential equations, including those arising in physics, engineering, and other scientific domains. Future work could explore extensions to <strong>partial differential equations (PDEs)</strong>, multi-physics systems, and real-world applications where data is scarce but physical laws are well understood.</p>
 
         
     </div>
@@ -484,9 +508,19 @@ $$<p>With the initial condition: \(y(0) = 1\).</p>
     <nav id="toc">
         <nav id="TableOfContents">
   <ul>
-    <li><a href="#exact-solution-using-numerical-integration">Exact Solution using numerical integration</a></li>
+    <li>
+      <ul>
+        <li><a href="#first-equation-to-solve">First Equation to Solve:</a></li>
+      </ul>
+    </li>
+    <li><a href="#exact-solution-using-numerical-integration">Exact Solution Using Numerical Integration</a></li>
     <li><a href="#use-a-neural-network-with-no-physical-information">Use a neural network with no &ldquo;physical&rdquo; information</a></li>
-    <li><a href="#using-a-physical-loss-on-the-neural-network">Using a physical loss on the neural network</a></li>
+    <li><a href="#using-a-physical-loss-in-the-neural-network">Using a Physical Loss in the Neural Network</a>
+      <ul>
+        <li><a href="#collocation-points-vs-training-points">Collocation Points vs. Training Points</a></li>
+      </ul>
+    </li>
+    <li><a href="#conclusion">Conclusion</a></li>
   </ul>
 </nav>
     </nav>
