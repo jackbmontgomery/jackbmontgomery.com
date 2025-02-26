@@ -92,12 +92,7 @@
 
         <div class="nav-links">
 
-            <div class="dark-theme-toggle">
-                <span class="sr-only dark-theme-toggle-screen-reader-target">theme</span>
-                <a aria-hidden="true" role="switch">
-                    <span class="theme-toggle-icon" data-feather="moon"></span>
-                </a>
-            </div>
+            
 
             <span class="nav-icons-divider"></span>
 
@@ -127,7 +122,6 @@
                 </a>
             </div>
 
-            
             <ul class="nav-hamburger-list visibility-hidden">
                 
                 <li class="nav-item">
@@ -255,7 +249,7 @@
 </span></span><span style="display:flex;"><span>length<span style="color:#f92672">=</span>int(final_time <span style="color:#f92672">/</span> tau)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">%</span>timeit rollout_loop(stepper_np, init_coords, length)
-</span></span></code></pre></div><pre><code>93.3 ms ± 2.16 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)
+</span></span></code></pre></div><pre><code>91.1 ms ± 1.82 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)
 </code></pre>
 <p><img src="output_3_0.png" alt="png"></p>
 <p>This is a perfectly valid solution to this problem. The issue is that as we make the final time larger, or increase the number of initial conditions, a loop based approach like this will not scale well. We will need to implement some vectorised and compiled function in order to speed up the computation. This is where JAX can help. While, JAX provides an almost identical API to Numpy, via <a href="https://docs.jax.dev/en/latest/jax.numpy.html#module-jax.numpy">jax.numpy</a> we need to be careful. A simple drop in replacement <strong>does not</strong> always speed up computation.</p>
@@ -293,7 +287,7 @@
 </span></span><span style="display:flex;"><span>length <span style="color:#f92672">=</span> int(final_time <span style="color:#f92672">/</span> tau)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">%</span>timeit rollout_loop(stepper_jnp, init_coords, length)
-</span></span></code></pre></div><pre><code>18 s ± 169 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
+</span></span></code></pre></div><pre><code>20.4 s ± 290 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
 </code></pre>
 <p><img src="output_6_0.png" alt="png"></p>
 <p>We can see that qualitatively, the Lorenz plots are produced are the same. I say qualitatively sice we can see that there is a lonely single paths along the outside of the butterfly shape in the jax implementation, but none in the numpy. This is simply due to the fact that numpy uses double precision and jax uses single precision by default. Since this system is chaotic, a small difference in implementation like this will produce different results.</p>
@@ -333,12 +327,13 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> rollout_fn
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">%</span>timeit rollout_scan(stepper_jnp)(init_coords, length)<span style="color:#f92672">.</span>block_until_ready()
-</span></span></code></pre></div><pre><code>54.1 ms ± 1.8 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)
+</span></span></code></pre></div><pre><code>56.2 ms ± 1.58 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)
 </code></pre>
 <p><img src="output_9_0.png" alt="png"></p>
 <p>Already, over such a small final time we can see that the rollout_scan has halved the execution time, while still, qualitatively, we still have the same butterfly shape. Let now comapre the execution time for our <em>scan</em> implementation, comapred with the numpy.</p>
 <p><img src="output_12_0.png" alt="png"></p>
-<p>Initially, we see that the numply implementation is actually faster than the scan. But as soon as the length grows, the numpy implementation grows linearly (it loops exponential but that is just because the x-axis is the logorithm), and the jax implementation is almost constant which is just remarkable. Bare in mind that this is not being run on any special GPU, this is just a CPU but JAX can optimised this code to make it run incredibly fast. The main question is how? How can JAX do this?</p>
+<p>Initially, we see that the numply implementation is actually faster than the scan. But as soon as the length grows, the numpy implementation grows linearly (it loops exponential but that is just because the x-axis is the logorithm), and the jax implementation is almost constant which is just remarkable, this is until \(10^5\) iterations. We see the scan implementation then start to increase from \(10^5, \ 10^5, 10^7\) similarly to how Numpy grew 2 orders of magnitude earlier. Meaning that the scan implmenttion is one hundred times faster than the numpy. This speedup is not even considering the implementation with specialised preocessing units, this speedup is on a vanilla CPU.</p>
+<p>The main question is how? How can JAX do this?</p>
 <p>To answer this, lets consider why JAX was so slow in a normal loop. At a low level, JAX converts linear algebra operations into <a href="https://openxla.org/xla">XLA</a> operations. A normal python loop will be unenrolled and each operation in an interation will be a node on that graph. Naturally, this will not be very efficient since the the construction and execution of this graph can be slow is the graph is too large. The <em>scan</em> function converts the code into a singe XLA while operations which means the computation can be run incredibly fast on your processing unit.</p>
 <h2 id="conclusion">Conclusion</h2>
 <p>While it is obvious that this <em>scan</em> functional is not replacing loops, we may still need the indexing and small loops may be faster than <em>scan</em>. It is incredible how much faster some computations can be when they do confirm to the correct signature and situation that is required. This is just a taste of what JAX can do, even what the <em>scan</em> functional can do. What we will discuss in another post is how we can use both scan and <a href="https://docs.jax.dev/en/latest/_autosummary/jax.vmap.html">jax.vmap</a> to create an incredibly fast routine to compute the maximal characteristic Lyapunov exponent in another chaotic system.</p>

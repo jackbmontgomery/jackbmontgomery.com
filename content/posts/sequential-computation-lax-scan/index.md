@@ -1,6 +1,6 @@
 ---
 date: 2025-02-26
-lastmod: 2025-02-26T13:09:40
+lastmod: 2025-02-26T14:30:15
 showTableOfContents: true
 tags: ['choas', 'physics', 'jax']
 title: "Sequential Computation with jax.lax.scan"
@@ -79,7 +79,7 @@ length=int(final_time / tau)
 %timeit rollout_loop(stepper_np, init_coords, length)
 ```
 
-    93.3 ms ± 2.16 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)
+    91.1 ms ± 1.82 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)
 
 
 
@@ -131,7 +131,7 @@ length = int(final_time / tau)
 %timeit rollout_loop(stepper_jnp, init_coords, length)
 ```
 
-    18 s ± 169 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
+    20.4 s ± 290 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
 
 
 
@@ -190,7 +190,7 @@ def rollout_scan(stepper):
 %timeit rollout_scan(stepper_jnp)(init_coords, length).block_until_ready()
 ```
 
-    54.1 ms ± 1.8 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)
+    56.2 ms ± 1.58 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)
 
 
 
@@ -216,7 +216,9 @@ Already, over such a small final time we can see that the rollout_scan has halve
     
 
 
-Initially, we see that the numply implementation is actually faster than the scan. But as soon as the length grows, the numpy implementation grows linearly (it loops exponential but that is just because the x-axis is the logorithm), and the jax implementation is almost constant which is just remarkable. Bare in mind that this is not being run on any special GPU, this is just a CPU but JAX can optimised this code to make it run incredibly fast. The main question is how? How can JAX do this?
+Initially, we see that the numply implementation is actually faster than the scan. But as soon as the length grows, the numpy implementation grows linearly (it loops exponential but that is just because the x-axis is the logorithm), and the jax implementation is almost constant which is just remarkable, this is until \(10^5\) iterations. We see the scan implementation then start to increase from \(10^5, \ 10^5, 10^7\) similarly to how Numpy grew 2 orders of magnitude earlier. Meaning that the scan implmenttion is one hundred times faster than the numpy. This speedup is not even considering the implementation with specialised preocessing units, this speedup is on a vanilla CPU.
+
+The main question is how? How can JAX do this?
 
 To answer this, lets consider why JAX was so slow in a normal loop. At a low level, JAX converts linear algebra operations into [XLA](https://openxla.org/xla) operations. A normal python loop will be unenrolled and each operation in an interation will be a node on that graph. Naturally, this will not be very efficient since the the construction and execution of this graph can be slow is the graph is too large. The *scan* function converts the code into a singe XLA while operations which means the computation can be run incredibly fast on your processing unit.
 

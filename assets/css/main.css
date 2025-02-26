@@ -124,10 +124,8 @@ img {
 
 /* HEADER */
 .header {
-    background-color: rgba(var(--light-primary-color), 0.95);
     height: 75px;
     left: 0;
-    /* position: fixed; */
     top: 0;
     transition: box-shadow 0.3s ease-in-out;
     width: 100%;
@@ -139,9 +137,11 @@ img {
 }
 
 .header .header-nav {
-    height: 75px;
-    background-color: inherit;
-    margin-top: 0;
+    background-image: url('/gifs/sine_wave.gif');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 50px;
 }
 
 .header-nav .avatar {
@@ -740,5 +740,8 @@ table td {
 @media screen and (max-width: 600px) {
     #btt-button {
         visibility: hidden;
+    }
+    .header .header-nav {
+        background-image: url('/gifs/sine_wave_mobile.gif');
     }
 }
