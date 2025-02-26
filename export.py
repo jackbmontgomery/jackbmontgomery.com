@@ -19,16 +19,24 @@ def replace_math_delimiters(text):
     )
 
 
-def wrap_code_blocks(text):
-    # Regex pattern to find code blocks enclosed by ```
-    pattern = re.compile(r"```(.*?)```", re.DOTALL)
+# def wrap_code_blocks(text):
+#     # Regex pattern to find code blocks enclosed by ```
+#     pattern = re.compile(r"```(.*?)```", re.DOTALL)
 
-    # Replace code blocks with wrapped Hugo details shortcode
-    def replacer(match):
-        code_content = match.group(1).strip()
-        return f'{{{{< details title="Code" >}}}}\n```{code_content}\n```\n{{{{< /details >}}}}'
+#     # Replace code blocks with wrapped Hugo details shortcode
+#     def replacer(match):
+#         code_content = match.group(1).strip()
+#         return f'{{{{< details title="Code" >}}}}\n```{code_content}\n```\n{{{{< /details >}}}}'
 
-    return pattern.sub(replacer, text)
+#     return pattern.sub(replacer, text)
+
+
+def remove_ignored_code_blocks(text):
+    # Regex pattern to match code blocks starting with ```\n#IGNORE and remove them
+    pattern = re.compile(r"```python\n#IGNORE.*?```", re.DOTALL)
+
+    # Replace matched code blocks with an empty string
+    return pattern.sub("", text)
 
 
 def remove_pre_blocks(text):
@@ -137,7 +145,7 @@ def main(note_book_name, meta_tags):
     with open(post_markdown_file, "w") as f:
         # Process and clean up the markdown content
         text = replace_math_delimiters(meta_data + body)
-        text = wrap_code_blocks(text)
+        text = remove_ignored_code_blocks(text)
         text = remove_pre_blocks(text)  # Remove <pre> blocks
         f.write(text)
 

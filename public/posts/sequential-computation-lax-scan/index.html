@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        :root {
+            --accent-color: {
+                    {
+                    .Site.Params.AccentColor | default "#FF4D4D"
+                }
+            }
+
+            ;
+
+            --font-size: {
+                    {
+                    .Site.Params.FontSize | default "17.5px"
+                }
+            }
+
+            ;
+        }
+    </style>
+
+    
+    
+    
+    
+    
+    
+
+    
+    <title>Sequential Computation with jax.lax.scan</title>
+    <meta name="description" content="Sequential Computation with jax.lax.scan Introduction Python while having a very simple and intuitive syntax is generally not performant out of the box, …">
+    <meta name="keywords" content='choas, physics, jax'>
+
+    <meta property="og:url" content="http://localhost:1313/posts/sequential-computation-lax-scan/">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Sequential Computation with jax.lax.scan">
+    <meta property="og:description" content="Sequential Computation with jax.lax.scan Introduction Python while having a very simple and intuitive syntax is generally not performant out of the box, …">
+    <meta property="og:image" content="http://localhost:1313/images/profile.webp">
+    <meta property="og:image:secure_url" content="http://localhost:1313/images/profile.webp">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Sequential Computation with jax.lax.scan">
+    <meta name="twitter:description" content="Sequential Computation with jax.lax.scan Introduction Python while having a very simple and intuitive syntax is generally not performant out of the box, …">
+    <meta property="twitter:domain" content="http://localhost:1313/posts/sequential-computation-lax-scan/">
+    <meta property="twitter:url" content="http://localhost:1313/posts/sequential-computation-lax-scan/">
+    <meta name="twitter:image" content="http://localhost:1313/images/profile.webp">
+
+    
+    <link rel="canonical" href="http://localhost:1313/posts/sequential-computation-lax-scan/">
+
+    
+    <link rel="stylesheet" type="text/css" href="/css/normalize.min.css" media="print">
+
+    
+    <link rel="stylesheet" type="text/css" href="/css/main.min.css">
+
+    
+    <link id="dark-theme" rel="stylesheet" href="/css/dark.min.css">
+
+    
+    <script src="/js/bundle.min.c856832346537b787d5a768476f58b2d6d8117e9f2f05b92c2a7cce81afe1cb0.js" integrity="sha256-yFaDI0ZTe3h9WnaEdvWLLW2BF&#43;ny8FuSwqfM6Br&#43;HLA="></script>
+
+    
+    
+
+    
+    
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<script>
+    MathJax = {
+        tex: {
+            displayMath: [['$$', '$$']],
+            inlineMath: [['\\(', '\\)']]
+        }
+    };
+</script>
+    
+</head><body>
+        <script>
+            
+            setThemeByUserPref();
+        </script><header class="header">
+    <nav class="header-nav">
+
+        <div class="nav-title">
+            <a class="nav-brand" href="http://localhost:1313/">Jack Montgomery</a>
+        </div>
+
+        <div class="nav-links">
+
+            <div class="dark-theme-toggle">
+                <span class="sr-only dark-theme-toggle-screen-reader-target">theme</span>
+                <a aria-hidden="true" role="switch">
+                    <span class="theme-toggle-icon" data-feather="moon"></span>
+                </a>
+            </div>
+
+            <span class="nav-icons-divider"></span>
+
+            
+            <div class="nav-link">
+                <a href="http://localhost:1313/" aria-label="" ><span data-feather='home'></span> Home </a>
+            </div>
+            
+            <div class="nav-link">
+                <a href="http://localhost:1313/posts/" aria-label="" ><span data-feather='book'></span> Posts </a>
+            </div>
+            
+            <div class="nav-link">
+                <a href="http://localhost:1313/tags/" aria-label="" ><span data-feather='tag'></span> Tags </a>
+            </div>
+            
+            <div class="nav-link">
+                <a href="http://localhost:1313/pdfs/jack_montgomery_cv.pdf" aria-label="" target="_blank"><span data-feather='file-text' ></span> CV </a>
+            </div>
+            
+
+            <div class="nav-link" id="hamburger-menu-toggle">
+                <span class="sr-only hamburger-menu-toggle-screen-reader-target">menu</span>
+                <a aria-checked="false" aria-labelledby="hamburger-menu-toggle" id="hamburger-menu-toggle-target"
+                    role="switch">
+                    <span data-feather="menu"></span>
+                </a>
+            </div>
+
+            
+            <ul class="nav-hamburger-list visibility-hidden">
+                
+                <li class="nav-item">
+                    <a href="http://localhost:1313/" ><span data-feather='home'></span> Home </a>
+                </li>
+                
+                <li class="nav-item">
+                    <a href="http://localhost:1313/posts/" ><span data-feather='book'></span> Posts </a>
+                </li>
+                
+                <li class="nav-item">
+                    <a href="http://localhost:1313/tags/" ><span data-feather='tag'></span> Tags </a>
+                </li>
+                
+                <li class="nav-item">
+                    <a href="http://localhost:1313/pdfs/jack_montgomery_cv.pdf" target="_blank"><span data-feather='file-text' ></span> CV </a>
+                </li>
+                
+            </ul>
+        </div>
+    </nav>
+</header><main id="content">
+    <div class="post container">
+    <div class="post-header-section">
+
+        
+
+        
+        
+        
+        
+        
+        
+
+        <p></p>
+
+        
+
+        
+
+        
+        <small role="doc-subtitle"></small>
+        
+
+        
+        <p class="post-date">February 26, 2025
+             | Updated February 26, 2025
+        </p>
+        
+
+        <ul class="post-tags">
+            
+            
+            <li class="post-tag"><a href="http://localhost:1313/tags/choas">choas</a></li>
+            
+            
+            
+            <li class="post-tag"><a href="http://localhost:1313/tags/physics">physics</a></li>
+            
+            
+            
+            <li class="post-tag"><a href="http://localhost:1313/tags/jax">jax</a></li>
+            
+            
+        </ul>
+    </div>
+
+    <div class="post-content">
+        <h1 id="sequential-computation-with-jaxlaxscan">Sequential Computation with jax.lax.scan</h1>
+<h2 id="introduction">Introduction</h2>
+<p>Python while having a very simple and intuitive syntax is generally not performant out of the box, esspecially with regard to control flows like loops and conditionals. <a href="https://docs.jax.dev/en/latest/index.html">JAX</a> provides simple API&rsquo;s and functional transformations to make python more performant while keeping the simple syntax. Specifically, what we will be looking into today is the <a href="https://docs.jax.dev/en/latest/_autosummary/jax.lax.scan.html">jax.lax.scan</a>, which I will call <em>scan</em> for short.</p>
+<h2 id="what-is-scan-good-for">What is <em>scan</em> good for?</h2>
+<p>In the simulation of dynamical systems, for example, we are confronted with the situation of moving the coordinates through time using the rules given by some differential or difference equation. For reasons we will see late, I will call this carry. We are looking to carry inital coordinates through time. But just moving these coordinates is not really the point. We want to know store the trajectory over time, which requires us to store these coordinates, or the carry, for every timestep in the simulation. This is type of problem that <em>scan</em> is suited for.</p>
+<h2 id="solution-with-numpy-and-jnp">Solution with Numpy and JNP</h2>
+<p>But before we discuss the usage of <em>scan</em>, let us discuss a simple solution to this problem. We can define some stepper, a function that takes in coordinates at the current timestep and returns the coordinates at the next timestep. We could then define a variable called trajectory and append to this at each iteration in the loop. Finally, we just set the next coordinates that have been returned as the coordinates. It would look something like this for the Lorenz system:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> numpy <span style="color:#66d9ef">as</span> np
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">LorenzRK4StepperNP</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> __init__(self, sigma<span style="color:#f92672">=</span><span style="color:#ae81ff">10.</span>, rho<span style="color:#f92672">=</span><span style="color:#ae81ff">28.</span>, beta<span style="color:#f92672">=</span><span style="color:#ae81ff">8</span><span style="color:#f92672">/</span><span style="color:#ae81ff">3</span>, tau<span style="color:#f92672">=</span><span style="color:#ae81ff">0.01</span>):
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>sigma <span style="color:#f92672">=</span> sigma
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>rho <span style="color:#f92672">=</span> rho
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>beta <span style="color:#f92672">=</span> beta
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>tau <span style="color:#f92672">=</span> tau
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> __call__(self, coords):
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">lorenz_rhs</span>(coords, sigma<span style="color:#f92672">=</span>self<span style="color:#f92672">.</span>sigma, rho<span style="color:#f92672">=</span>self<span style="color:#f92672">.</span>rho, beta<span style="color:#f92672">=</span>self<span style="color:#f92672">.</span>beta):
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> np<span style="color:#f92672">.</span>array(
+</span></span><span style="display:flex;"><span>                [
+</span></span><span style="display:flex;"><span>                    sigma <span style="color:#f92672">*</span> (coords[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">-</span> coords[<span style="color:#ae81ff">0</span>]),
+</span></span><span style="display:flex;"><span>                    coords[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">*</span> (rho <span style="color:#f92672">-</span> coords[<span style="color:#ae81ff">2</span>]) <span style="color:#f92672">-</span> coords[<span style="color:#ae81ff">1</span>],
+</span></span><span style="display:flex;"><span>                    coords[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">*</span> coords[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">-</span> beta <span style="color:#f92672">*</span> coords[<span style="color:#ae81ff">2</span>],
+</span></span><span style="display:flex;"><span>                ]
+</span></span><span style="display:flex;"><span>            )
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        k_1 <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>tau <span style="color:#f92672">*</span> lorenz_rhs(coords)
+</span></span><span style="display:flex;"><span>        k_2 <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>tau <span style="color:#f92672">*</span> lorenz_rhs(coords <span style="color:#f92672">+</span> (<span style="color:#ae81ff">1</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>) <span style="color:#f92672">*</span> k_1)
+</span></span><span style="display:flex;"><span>        k_3 <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>tau <span style="color:#f92672">*</span> lorenz_rhs(coords <span style="color:#f92672">+</span> (<span style="color:#ae81ff">1</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>) <span style="color:#f92672">*</span> k_2)
+</span></span><span style="display:flex;"><span>        k_4 <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>tau <span style="color:#f92672">*</span> lorenz_rhs(coords <span style="color:#f92672">+</span> k_3)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        new_coords <span style="color:#f92672">=</span> coords <span style="color:#f92672">+</span> (<span style="color:#ae81ff">1</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">6</span>) <span style="color:#f92672">*</span> (k_1 <span style="color:#f92672">+</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> k_2 <span style="color:#f92672">+</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> k_3 <span style="color:#f92672">+</span> k_4)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> new_coords
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">rollout_loop</span>(stepper, init_coords, length):
+</span></span><span style="display:flex;"><span>    coords <span style="color:#f92672">=</span> init_coords
+</span></span><span style="display:flex;"><span>    traj <span style="color:#f92672">=</span> [init_coords]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> _ <span style="color:#f92672">in</span> range(length):
+</span></span><span style="display:flex;"><span>        coords <span style="color:#f92672">=</span> stepper(coords)
+</span></span><span style="display:flex;"><span>        traj<span style="color:#f92672">.</span>append(coords)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> traj
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>sigma<span style="color:#f92672">=</span><span style="color:#ae81ff">10.</span>
+</span></span><span style="display:flex;"><span>rho<span style="color:#f92672">=</span><span style="color:#ae81ff">28.</span>
+</span></span><span style="display:flex;"><span>beta<span style="color:#f92672">=</span><span style="color:#ae81ff">8</span><span style="color:#f92672">/</span><span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>tau <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.01</span>
+</span></span><span style="display:flex;"><span>stepper_np <span style="color:#f92672">=</span> LorenzRK4StepperNP(sigma, rho, beta, tau)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>init_coords <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>full((<span style="color:#ae81ff">3</span>,), <span style="color:#ae81ff">10</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>final_time <span style="color:#f92672">=</span> <span style="color:#ae81ff">100</span>
+</span></span><span style="display:flex;"><span>length<span style="color:#f92672">=</span>int(final_time <span style="color:#f92672">/</span> tau)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">%</span>timeit rollout_loop(stepper_np, init_coords, length)
+</span></span></code></pre></div><pre><code>93.3 ms ± 2.16 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)
+</code></pre>
+<p><img src="output_3_0.png" alt="png"></p>
+<p>This is a perfectly valid solution to this problem. The issue is that as we make the final time larger, or increase the number of initial conditions, a loop based approach like this will not scale well. We will need to implement some vectorised and compiled function in order to speed up the computation. This is where JAX can help. While, JAX provides an almost identical API to Numpy, via <a href="https://docs.jax.dev/en/latest/jax.numpy.html#module-jax.numpy">jax.numpy</a> we need to be careful. A simple drop in replacement <strong>does not</strong> always speed up computation.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> jax.numpy <span style="color:#66d9ef">as</span> jnp
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">LorenzRK4StepperJNP</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> __init__(self, sigma<span style="color:#f92672">=</span><span style="color:#ae81ff">10.0</span>, rho<span style="color:#f92672">=</span><span style="color:#ae81ff">28.0</span>, beta<span style="color:#f92672">=</span><span style="color:#ae81ff">8</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">3</span>, tau<span style="color:#f92672">=</span><span style="color:#ae81ff">0.01</span>):
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>sigma <span style="color:#f92672">=</span> sigma
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>rho <span style="color:#f92672">=</span> rho
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>beta <span style="color:#f92672">=</span> beta
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>tau <span style="color:#f92672">=</span> tau
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> __call__(self, coords):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">lorenz_rhs</span>(coords, sigma<span style="color:#f92672">=</span>self<span style="color:#f92672">.</span>sigma, rho<span style="color:#f92672">=</span>self<span style="color:#f92672">.</span>rho, beta<span style="color:#f92672">=</span>self<span style="color:#f92672">.</span>beta):
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> jnp<span style="color:#f92672">.</span>array(
+</span></span><span style="display:flex;"><span>                [
+</span></span><span style="display:flex;"><span>                    sigma <span style="color:#f92672">*</span> (coords[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">-</span> coords[<span style="color:#ae81ff">0</span>]),
+</span></span><span style="display:flex;"><span>                    coords[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">*</span> (rho <span style="color:#f92672">-</span> coords[<span style="color:#ae81ff">2</span>]) <span style="color:#f92672">-</span> coords[<span style="color:#ae81ff">1</span>],
+</span></span><span style="display:flex;"><span>                    coords[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">*</span> coords[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">-</span> beta <span style="color:#f92672">*</span> coords[<span style="color:#ae81ff">2</span>],
+</span></span><span style="display:flex;"><span>                ]
+</span></span><span style="display:flex;"><span>            )
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        k_1 <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>tau <span style="color:#f92672">*</span> lorenz_rhs(coords)
+</span></span><span style="display:flex;"><span>        k_2 <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>tau <span style="color:#f92672">*</span> lorenz_rhs(coords <span style="color:#f92672">+</span> (<span style="color:#ae81ff">1</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>) <span style="color:#f92672">*</span> k_1)
+</span></span><span style="display:flex;"><span>        k_3 <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>tau <span style="color:#f92672">*</span> lorenz_rhs(coords <span style="color:#f92672">+</span> (<span style="color:#ae81ff">1</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>) <span style="color:#f92672">*</span> k_2)
+</span></span><span style="display:flex;"><span>        k_4 <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>tau <span style="color:#f92672">*</span> lorenz_rhs(coords <span style="color:#f92672">+</span> k_3)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        new_coords <span style="color:#f92672">=</span> coords <span style="color:#f92672">+</span> (<span style="color:#ae81ff">1</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">6</span>) <span style="color:#f92672">*</span> (k_1 <span style="color:#f92672">+</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> k_2 <span style="color:#f92672">+</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> k_3 <span style="color:#f92672">+</span> k_4)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> new_coords
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>stepper_jnp <span style="color:#f92672">=</span> LorenzRK4StepperJNP(sigma, rho, beta, tau)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>init_coords <span style="color:#f92672">=</span> jnp<span style="color:#f92672">.</span>full((<span style="color:#ae81ff">3</span>,), <span style="color:#ae81ff">10</span>)
+</span></span><span style="display:flex;"><span>length <span style="color:#f92672">=</span> int(final_time <span style="color:#f92672">/</span> tau)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">%</span>timeit rollout_loop(stepper_jnp, init_coords, length)
+</span></span></code></pre></div><pre><code>18 s ± 169 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
+</code></pre>
+<p><img src="output_6_0.png" alt="png"></p>
+<p>We can see that qualitatively, the Lorenz plots are produced are the same. I say qualitatively sice we can see that there is a lonely single paths along the outside of the butterfly shape in the jax implementation, but none in the numpy. This is simply due to the fact that numpy uses double precision and jax uses single precision by default. Since this system is chaotic, a small difference in implementation like this will produce different results.</p>
+<p>The other difference is that the jax implementation takes significantly longer. But as I said, this is a faily naïve translation of simple method. We will be able to speed this up significantly using the <em>scan</em> functional.</p>
+<h2 id="using-scan">Using <em>scan</em></h2>
+<p><em>scan</em> takes in four main arguments that pertain to us.</p>
+<ol>
+<li><strong>f</strong>: This is a function that is used to move the system, kind of like the stepper method called in the body of the loop, however this method needs to have a very specific signature which we will discuss in a little bit.</li>
+<li><strong>init</strong>: These are the initial conditions that will be passed into the funtion <strong>f</strong>.</li>
+<li><strong>xs</strong>: Again, this is an array that will be passed to the function <strong>f</strong> during each iteration, this is used for some external force, like the control or action in a reinforcement learning problem.</li>
+<li><strong>length</strong>: The number of iterations that will be run.</li>
+</ol>
+<p>That is a lot of information but I think it will all makes sense if we look at what a vanilla python implementation of the <em>scan</em> function would be:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">scan</span>(f, init, xs, length<span style="color:#f92672">=</span><span style="color:#66d9ef">None</span>):
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> xs <span style="color:#f92672">is</span> <span style="color:#66d9ef">None</span>:
+</span></span><span style="display:flex;"><span>    xs <span style="color:#f92672">=</span> [<span style="color:#66d9ef">None</span>] <span style="color:#f92672">*</span> length
+</span></span><span style="display:flex;"><span>  carry <span style="color:#f92672">=</span> init
+</span></span><span style="display:flex;"><span>  ys <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">for</span> x <span style="color:#f92672">in</span> xs:
+</span></span><span style="display:flex;"><span>    carry, y <span style="color:#f92672">=</span> f(carry, x)
+</span></span><span style="display:flex;"><span>    ys<span style="color:#f92672">.</span>append(y)
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> carry, np<span style="color:#f92672">.</span>stack(ys)
+</span></span></code></pre></div><p>First off, we can see what the specific signature of the function <strong>f</strong> is. It is a function that takes in carry in its first argument. This is why I used carry to mean coordinates earlier, and it also takes in an <strong>x</strong> from the <strong>xs</strong>. In the loop, we can see that carry is passed again to the function, and the other output of the function is appended to a list, <strong>y</strong>, which is then stacked and returned after execution. Thus, <strong>f</strong> must take two arguments, and return two values. The first will be the coordinates to carry to the step step, and if we make the second the coordinates as well, we will get the coordinates stacked in the second position on the return of <em>scan</em>. The stacked history of the coordinates is just the trajectory the initial conditions have taken. Let us adjust our stepper to confirm to what is needed for <strong>f</strong> and adjust the rollout to use <em>scan</em>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> jax 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">rollout_scan</span>(stepper):
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">scan_fn</span>(coords, _):
+</span></span><span style="display:flex;"><span>        new_coords <span style="color:#f92672">=</span> stepper(coords)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> new_coords, new_coords
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">rollout_fn</span>(init_coords, length):
+</span></span><span style="display:flex;"><span>        _, trajectory <span style="color:#f92672">=</span> jax<span style="color:#f92672">.</span>lax<span style="color:#f92672">.</span>scan(scan_fn, init_coords, <span style="color:#66d9ef">None</span>, length)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> trajectory
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> rollout_fn
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">%</span>timeit rollout_scan(stepper_jnp)(init_coords, length)<span style="color:#f92672">.</span>block_until_ready()
+</span></span></code></pre></div><pre><code>54.1 ms ± 1.8 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)
+</code></pre>
+<p><img src="output_9_0.png" alt="png"></p>
+<p>Already, over such a small final time we can see that the rollout_scan has halved the execution time, while still, qualitatively, we still have the same butterfly shape. Let now comapre the execution time for our <em>scan</em> implementation, comapred with the numpy.</p>
+<p><img src="output_12_0.png" alt="png"></p>
+<p>Initially, we see that the numply implementation is actually faster than the scan. But as soon as the length grows, the numpy implementation grows linearly (it loops exponential but that is just because the x-axis is the logorithm), and the jax implementation is almost constant which is just remarkable. Bare in mind that this is not being run on any special GPU, this is just a CPU but JAX can optimised this code to make it run incredibly fast. The main question is how? How can JAX do this?</p>
+<p>To answer this, lets consider why JAX was so slow in a normal loop. At a low level, JAX converts linear algebra operations into <a href="https://openxla.org/xla">XLA</a> operations. A normal python loop will be unenrolled and each operation in an interation will be a node on that graph. Naturally, this will not be very efficient since the the construction and execution of this graph can be slow is the graph is too large. The <em>scan</em> function converts the code into a singe XLA while operations which means the computation can be run incredibly fast on your processing unit.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>While it is obvious that this <em>scan</em> functional is not replacing loops, we may still need the indexing and small loops may be faster than <em>scan</em>. It is incredible how much faster some computations can be when they do confirm to the correct signature and situation that is required. This is just a taste of what JAX can do, even what the <em>scan</em> functional can do. What we will discuss in another post is how we can use both scan and <a href="https://docs.jax.dev/en/latest/_autosummary/jax.vmap.html">jax.vmap</a> to create an incredibly fast routine to compute the maximal characteristic Lyapunov exponent in another chaotic system.</p>
+
+        
+    </div>
+
+    <div class="prev-next">
+        
+    </div>
+
+    
+    
+    
+</div>
+<aside class="post-toc">
+    <nav id="toc">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#introduction">Introduction</a></li>
+    <li><a href="#what-is-scan-good-for">What is <em>scan</em> good for?</a></li>
+    <li><a href="#solution-with-numpy-and-jnp">Solution with Numpy and JNP</a></li>
+    <li><a href="#using-scan">Using <em>scan</em></a></li>
+    <li><a href="#conclusion">Conclusion</a></li>
+  </ul>
+</nav>
+    </nav>
+</aside>
+
+
+
+    
+
+        </main><footer class="footer">
+    
+    
+
+    
+
+    
+
+    
+</footer></body>
+</html>

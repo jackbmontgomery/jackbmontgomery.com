@@ -125,10 +125,9 @@ img {
 /* HEADER */
 .header {
     background-color: rgba(var(--light-primary-color), 0.95);
-    color: inherit;
-    height: 50px;
+    height: 75px;
     left: 0;
-    position: fixed;
+    /* position: fixed; */
     top: 0;
     transition: box-shadow 0.3s ease-in-out;
     width: 100%;
@@ -140,7 +139,7 @@ img {
 }
 
 .header .header-nav {
-    height: 50px;
+    height: 75px;
     background-color: inherit;
     margin-top: 0;
 }
