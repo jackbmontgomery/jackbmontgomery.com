@@ -124,7 +124,8 @@ img {
 
 /* HEADER */
 .header {
-    height: 75px;
+    height: 50px;
+    position: fixed;
     left: 0;
     top: 0;
     transition: box-shadow 0.3s ease-in-out;
@@ -137,11 +138,8 @@ img {
 }
 
 .header .header-nav {
-    background-image: url('/gifs/sine_wave.gif');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
     height: 50px;
+    background-color: inherit;
 }
 
 .header-nav .avatar {

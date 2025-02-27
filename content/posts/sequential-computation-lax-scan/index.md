@@ -1,6 +1,6 @@
 ---
 date: 2025-02-26
-lastmod: 2025-02-26T14:30:15
+lastmod: 2025-02-27T07:51:42
 showTableOfContents: true
 tags: ['choas', 'physics', 'jax']
 title: "Sequential Computation with jax.lax.scan"
@@ -10,15 +10,18 @@ type: "post"
 
 ## Introduction
 
-Python while having a very simple and intuitive syntax is generally not performant out of the box, esspecially with regard to control flows like loops and conditionals. [JAX](https://docs.jax.dev/en/latest/index.html) provides simple API's and functional transformations to make python more performant while keeping the simple syntax. Specifically, what we will be looking into today is the [jax.lax.scan](https://docs.jax.dev/en/latest/_autosummary/jax.lax.scan.html), which I will call *scan* for short. 
+Python has a very simple and intuitive syntax that makes the developing time of a project, generally, short. The issue with python is when we start to consider the executive time for projects, esspecially intentive simulation and modelling jobs. In these scenarios julia or Matlab could be better suited to the task. 
+
+
+One of the reasons python is slow in these simulation and physics environments is that they requiure extensive control flow. There is lots of looping and conditions which pyhon is not very good at. We will be using [JAX](https://docs.jax.dev/en/latest/index.html) in the post today to try an cirucmvent these control flow bottlenecks in python programs. JAX is an open source python package made by Google,  provides simple API's and functional transformations to make python more performant while keeping the simple syntax. Specifically, what we will be looking into today is the [jax.lax.scan](https://docs.jax.dev/en/latest/_autosummary/jax.lax.scan.html), which I will call *scan* for short. 
 
 ## What is *scan* good for?
 
-In the simulation of dynamical systems, for example, we are confronted with the situation of moving the coordinates through time using the rules given by some differential or difference equation. For reasons we will see late, I will call this carry. We are looking to carry inital coordinates through time. But just moving these coordinates is not really the point. We want to know store the trajectory over time, which requires us to store these coordinates, or the carry, for every timestep in the simulation. This is type of problem that *scan* is suited for.
+In the simulation of dynamical systems, for example, we are confronted with the situation of moving the coordinates through time using the rules given by some differential or difference equations. For reasons we will see late, I will call this carry. We are looking to carry inital coordinates through time in order to compute the **trajectory**. This is type of problem that *scan* is very well suited for.
 
 ## Solution with Numpy and JNP
 
-But before we discuss the usage of *scan*, let us discuss a simple solution to this problem. We can define some stepper, a function that takes in coordinates at the current timestep and returns the coordinates at the next timestep. We could then define a variable called trajectory and append to this at each iteration in the loop. Finally, we just set the next coordinates that have been returned as the coordinates. It would look something like this for the Lorenz system:
+But before we discuss the usage of *scan*, let us discuss a simple solution to this problem. We can define some stepper, a function that takes in coordinates at the current timestep and returns the coordinates at the next timestep. We could then define a variable called trajectory and append to this at each iteration in the loop. Finally, we just set the next coordinates that have been returned from the stepper as the coordinates. It would look something like this for the Lorenz system:
 
 
 
@@ -79,7 +82,7 @@ length=int(final_time / tau)
 %timeit rollout_loop(stepper_np, init_coords, length)
 ```
 
-    91.1 ms ± 1.82 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)
+    91.8 ms ± 1.78 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)
 
 
 
@@ -91,7 +94,7 @@ length=int(final_time / tau)
     
 
 
-This is a perfectly valid solution to this problem. The issue is that as we make the final time larger, or increase the number of initial conditions, a loop based approach like this will not scale well. We will need to implement some vectorised and compiled function in order to speed up the computation. This is where JAX can help. While, JAX provides an almost identical API to Numpy, via [jax.numpy](https://docs.jax.dev/en/latest/jax.numpy.html#module-jax.numpy) we need to be careful. A simple drop in replacement **does not** always speed up computation.
+This is a perfectly valid solution to this problem. As we can see, the short final time that we are integrating to is very quickly reached by this Numpy implementation. The issue is that as we make the final time larger, or increase the number of initial conditions, a loop based approach like this will not scale well. We will need to implement some vectorised and compiled function in order to speed up the computation. This is where JAX can help. While, JAX provides an almost identical API to Numpy, via [jax.numpy](https://docs.jax.dev/en/latest/jax.numpy.html#module-jax.numpy) we need to be careful. A simple drop in replacement **does not** always speed up computation, actually it often slows the program down:
 
 
 ```python
@@ -131,27 +134,16 @@ length = int(final_time / tau)
 %timeit rollout_loop(stepper_jnp, init_coords, length)
 ```
 
-    20.4 s ± 290 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
+    20.5 s ± 284 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
 
 
-
-
-
-
-    
-![png](output_6_0.png)
-    
-
-
-We can see that qualitatively, the Lorenz plots are produced are the same. I say qualitatively sice we can see that there is a lonely single paths along the outside of the butterfly shape in the jax implementation, but none in the numpy. This is simply due to the fact that numpy uses double precision and jax uses single precision by default. Since this system is chaotic, a small difference in implementation like this will produce different results.
-
-The other difference is that the jax implementation takes significantly longer. But as I said, this is a faily naïve translation of simple method. We will be able to speed this up significantly using the *scan* functional. 
+Suddenly, by just replacing *np* with *jnp* the average computation time of the trajectoy went from ~90ms to 20s. For reasons taht will be disucssed later, JAX does not perform very well in normal python loops. There are extremely fast implementations of looping logic that JAX offers, one of which is the *scan* functional.
 
 ## Using *scan*
 
 *scan* takes in four main arguments that pertain to us.
 1. **f**: This is a function that is used to move the system, kind of like the stepper method called in the body of the loop, however this method needs to have a very specific signature which we will discuss in a little bit.
-2. **init**: These are the initial conditions that will be passed into the funtion **f**.
+2. **init**: These are the initial conditions that will be passed into the funtion **f**, in other words this is the inital "carry".
 3. **xs**: Again, this is an array that will be passed to the function **f** during each iteration, this is used for some external force, like the control or action in a reinforcement learning problem.
 4. **length**: The number of iterations that will be run.
 
@@ -168,7 +160,11 @@ def scan(f, init, xs, length=None):
   return carry, np.stack(ys)
 ```
 
-First off, we can see what the specific signature of the function **f** is. It is a function that takes in carry in its first argument. This is why I used carry to mean coordinates earlier, and it also takes in an **x** from the **xs**. In the loop, we can see that carry is passed again to the function, and the other output of the function is appended to a list, **y**, which is then stacked and returned after execution. Thus, **f** must take two arguments, and return two values. The first will be the coordinates to carry to the step step, and if we make the second the coordinates as well, we will get the coordinates stacked in the second position on the return of *scan*. The stacked history of the coordinates is just the trajectory the initial conditions have taken. Let us adjust our stepper to confirm to what is needed for **f** and adjust the rollout to use *scan*. 
+First off, we can see what the specific signature of the function **f** is. It is a function that takes in carry in its first argument. This is why I used carry to mean coordinates earlier, and it also takes in an **x** from the **xs**. **f** then passes back the new carry, as well as **y** which then gets appended to an array, and returned as a stack. To translate this into the scernario we care about. The "carry" is returned but the function, then needed an input - in that way it behaves as coorindates do in the Numpy implementation. **ys** are not really considered during the loop but they store data and are returned at the end, in that way they behave like a trajectory. If we were to return coordinates in the first and second position, the information would carry from loop to loop **and** we would compute the trajectory,
+
+**f** takes in a second argument which, as I mentioned, is related to some external input or force, we will not be needing that in this scernatio.
+
+Let us refactor the Numpy implementation. The main change to the code will be rollout function. Instead of rollout being a function, we will make it a function transformatio, ie. it will return a function, this is just so that we do not need to handle the two inputs and two outputs that the scan function needs. We will just wrap it in a transoformation and call the transformed rollout.
 
 
 ```python
@@ -190,7 +186,7 @@ def rollout_scan(stepper):
 %timeit rollout_scan(stepper_jnp)(init_coords, length).block_until_ready()
 ```
 
-    56.2 ms ± 1.58 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)
+    55.1 ms ± 1.64 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)
 
 
 
@@ -198,11 +194,13 @@ def rollout_scan(stepper):
 
 
     
-![png](output_9_0.png)
+![png](output_8_0.png)
     
 
 
-Already, over such a small final time we can see that the rollout_scan has halved the execution time, while still, qualitatively, we still have the same butterfly shape. Let now comapre the execution time for our *scan* implementation, comapred with the numpy.
+We can see that qualitatively, the Lorenz plots are produced are the same. I say qualitatively sice we can see that there are differences, like the **scan** plot has a couple isolated paths on the outside of the butterfly. This difference is due to the fact that JAX uses single precision and Numpy uses double precision by default. Since we know this is a chaotic system, a simple implementation detail like this will have large impacts on the exact trajectory.
+
+In terms of performance, we see that this transformation and implementation with *scan* has beaten even the Numpy implementation over this small time horizon. Next, we can compare the two implementations over longer integration times.
 
 
 
@@ -212,7 +210,7 @@ Already, over such a small final time we can see that the rollout_scan has halve
 
 
     
-![png](output_12_0.png)
+![png](output_11_0.png)
     
 
 
@@ -225,3 +223,9 @@ To answer this, lets consider why JAX was so slow in a normal loop. At a low lev
 ## Conclusion
 
 While it is obvious that this *scan* functional is not replacing loops, we may still need the indexing and small loops may be faster than *scan*. It is incredible how much faster some computations can be when they do confirm to the correct signature and situation that is required. This is just a taste of what JAX can do, even what the *scan* functional can do. What we will discuss in another post is how we can use both scan and [jax.vmap](https://docs.jax.dev/en/latest/_autosummary/jax.vmap.html) to create an incredibly fast routine to compute the maximal characteristic Lyapunov exponent in another chaotic system.
+
+## References
+
+[JAX.lax.scan tutorial (for autoregressive rollout)](https://www.youtube.com/watch?v=NlQ1N3W3Wms)
+
+[Largest Lyapunov Exponent using Autodiff in JAX/Python](https://www.youtube.com/watch?v=zRMBIkpcuu0)

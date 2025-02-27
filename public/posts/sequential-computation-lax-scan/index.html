@@ -32,19 +32,19 @@
 
     
     <title>Sequential Computation with jax.lax.scan</title>
-    <meta name="description" content="Sequential Computation with jax.lax.scan Introduction Python while having a very simple and intuitive syntax is generally not performant out of the box, …">
+    <meta name="description" content="Sequential Computation with jax.lax.scan Introduction Python has a very simple and intuitive syntax that makes the developing time of a project, generally, …">
     <meta name="keywords" content='choas, physics, jax'>
 
     <meta property="og:url" content="http://localhost:1313/posts/sequential-computation-lax-scan/">
     <meta property="og:type" content="website">
     <meta property="og:title" content="Sequential Computation with jax.lax.scan">
-    <meta property="og:description" content="Sequential Computation with jax.lax.scan Introduction Python while having a very simple and intuitive syntax is generally not performant out of the box, …">
+    <meta property="og:description" content="Sequential Computation with jax.lax.scan Introduction Python has a very simple and intuitive syntax that makes the developing time of a project, generally, …">
     <meta property="og:image" content="http://localhost:1313/images/profile.webp">
     <meta property="og:image:secure_url" content="http://localhost:1313/images/profile.webp">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Sequential Computation with jax.lax.scan">
-    <meta name="twitter:description" content="Sequential Computation with jax.lax.scan Introduction Python while having a very simple and intuitive syntax is generally not performant out of the box, …">
+    <meta name="twitter:description" content="Sequential Computation with jax.lax.scan Introduction Python has a very simple and intuitive syntax that makes the developing time of a project, generally, …">
     <meta property="twitter:domain" content="http://localhost:1313/posts/sequential-computation-lax-scan/">
     <meta property="twitter:url" content="http://localhost:1313/posts/sequential-computation-lax-scan/">
     <meta name="twitter:image" content="http://localhost:1313/images/profile.webp">
@@ -92,7 +92,12 @@
 
         <div class="nav-links">
 
-            
+            <div class="dark-theme-toggle">
+                <span class="sr-only dark-theme-toggle-screen-reader-target">theme</span>
+                <a aria-hidden="true" role="switch">
+                    <span class="theme-toggle-icon" data-feather="moon"></span>
+                </a>
+            </div>
 
             <span class="nav-icons-divider"></span>
 
@@ -168,7 +173,7 @@
 
         
         <p class="post-date">February 26, 2025
-             | Updated February 26, 2025
+             | Updated February 27, 2025
         </p>
         
 
@@ -192,11 +197,12 @@
     <div class="post-content">
         <h1 id="sequential-computation-with-jaxlaxscan">Sequential Computation with jax.lax.scan</h1>
 <h2 id="introduction">Introduction</h2>
-<p>Python while having a very simple and intuitive syntax is generally not performant out of the box, esspecially with regard to control flows like loops and conditionals. <a href="https://docs.jax.dev/en/latest/index.html">JAX</a> provides simple API&rsquo;s and functional transformations to make python more performant while keeping the simple syntax. Specifically, what we will be looking into today is the <a href="https://docs.jax.dev/en/latest/_autosummary/jax.lax.scan.html">jax.lax.scan</a>, which I will call <em>scan</em> for short.</p>
+<p>Python has a very simple and intuitive syntax that makes the developing time of a project, generally, short. The issue with python is when we start to consider the executive time for projects, esspecially intentive simulation and modelling jobs. In these scenarios julia or Matlab could be better suited to the task.</p>
+<p>One of the reasons python is slow in these simulation and physics environments is that they requiure extensive control flow. There is lots of looping and conditions which pyhon is not very good at. We will be using <a href="https://docs.jax.dev/en/latest/index.html">JAX</a> in the post today to try an cirucmvent these control flow bottlenecks in python programs. JAX is an open source python package made by Google,  provides simple API&rsquo;s and functional transformations to make python more performant while keeping the simple syntax. Specifically, what we will be looking into today is the <a href="https://docs.jax.dev/en/latest/_autosummary/jax.lax.scan.html">jax.lax.scan</a>, which I will call <em>scan</em> for short.</p>
 <h2 id="what-is-scan-good-for">What is <em>scan</em> good for?</h2>
-<p>In the simulation of dynamical systems, for example, we are confronted with the situation of moving the coordinates through time using the rules given by some differential or difference equation. For reasons we will see late, I will call this carry. We are looking to carry inital coordinates through time. But just moving these coordinates is not really the point. We want to know store the trajectory over time, which requires us to store these coordinates, or the carry, for every timestep in the simulation. This is type of problem that <em>scan</em> is suited for.</p>
+<p>In the simulation of dynamical systems, for example, we are confronted with the situation of moving the coordinates through time using the rules given by some differential or difference equations. For reasons we will see late, I will call this carry. We are looking to carry inital coordinates through time in order to compute the <strong>trajectory</strong>. This is type of problem that <em>scan</em> is very well suited for.</p>
 <h2 id="solution-with-numpy-and-jnp">Solution with Numpy and JNP</h2>
-<p>But before we discuss the usage of <em>scan</em>, let us discuss a simple solution to this problem. We can define some stepper, a function that takes in coordinates at the current timestep and returns the coordinates at the next timestep. We could then define a variable called trajectory and append to this at each iteration in the loop. Finally, we just set the next coordinates that have been returned as the coordinates. It would look something like this for the Lorenz system:</p>
+<p>But before we discuss the usage of <em>scan</em>, let us discuss a simple solution to this problem. We can define some stepper, a function that takes in coordinates at the current timestep and returns the coordinates at the next timestep. We could then define a variable called trajectory and append to this at each iteration in the loop. Finally, we just set the next coordinates that have been returned from the stepper as the coordinates. It would look something like this for the Lorenz system:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> numpy <span style="color:#66d9ef">as</span> np
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">LorenzRK4StepperNP</span>:
@@ -249,10 +255,10 @@
 </span></span><span style="display:flex;"><span>length<span style="color:#f92672">=</span>int(final_time <span style="color:#f92672">/</span> tau)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">%</span>timeit rollout_loop(stepper_np, init_coords, length)
-</span></span></code></pre></div><pre><code>91.1 ms ± 1.82 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)
+</span></span></code></pre></div><pre><code>91.8 ms ± 1.78 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)
 </code></pre>
 <p><img src="output_3_0.png" alt="png"></p>
-<p>This is a perfectly valid solution to this problem. The issue is that as we make the final time larger, or increase the number of initial conditions, a loop based approach like this will not scale well. We will need to implement some vectorised and compiled function in order to speed up the computation. This is where JAX can help. While, JAX provides an almost identical API to Numpy, via <a href="https://docs.jax.dev/en/latest/jax.numpy.html#module-jax.numpy">jax.numpy</a> we need to be careful. A simple drop in replacement <strong>does not</strong> always speed up computation.</p>
+<p>This is a perfectly valid solution to this problem. As we can see, the short final time that we are integrating to is very quickly reached by this Numpy implementation. The issue is that as we make the final time larger, or increase the number of initial conditions, a loop based approach like this will not scale well. We will need to implement some vectorised and compiled function in order to speed up the computation. This is where JAX can help. While, JAX provides an almost identical API to Numpy, via <a href="https://docs.jax.dev/en/latest/jax.numpy.html#module-jax.numpy">jax.numpy</a> we need to be careful. A simple drop in replacement <strong>does not</strong> always speed up computation, actually it often slows the program down:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> jax.numpy <span style="color:#66d9ef">as</span> jnp
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">LorenzRK4StepperJNP</span>:
@@ -287,16 +293,14 @@
 </span></span><span style="display:flex;"><span>length <span style="color:#f92672">=</span> int(final_time <span style="color:#f92672">/</span> tau)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">%</span>timeit rollout_loop(stepper_jnp, init_coords, length)
-</span></span></code></pre></div><pre><code>20.4 s ± 290 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
+</span></span></code></pre></div><pre><code>20.5 s ± 284 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
 </code></pre>
-<p><img src="output_6_0.png" alt="png"></p>
-<p>We can see that qualitatively, the Lorenz plots are produced are the same. I say qualitatively sice we can see that there is a lonely single paths along the outside of the butterfly shape in the jax implementation, but none in the numpy. This is simply due to the fact that numpy uses double precision and jax uses single precision by default. Since this system is chaotic, a small difference in implementation like this will produce different results.</p>
-<p>The other difference is that the jax implementation takes significantly longer. But as I said, this is a faily naïve translation of simple method. We will be able to speed this up significantly using the <em>scan</em> functional.</p>
+<p>Suddenly, by just replacing <em>np</em> with <em>jnp</em> the average computation time of the trajectoy went from ~90ms to 20s. For reasons taht will be disucssed later, JAX does not perform very well in normal python loops. There are extremely fast implementations of looping logic that JAX offers, one of which is the <em>scan</em> functional.</p>
 <h2 id="using-scan">Using <em>scan</em></h2>
 <p><em>scan</em> takes in four main arguments that pertain to us.</p>
 <ol>
 <li><strong>f</strong>: This is a function that is used to move the system, kind of like the stepper method called in the body of the loop, however this method needs to have a very specific signature which we will discuss in a little bit.</li>
-<li><strong>init</strong>: These are the initial conditions that will be passed into the funtion <strong>f</strong>.</li>
+<li><strong>init</strong>: These are the initial conditions that will be passed into the funtion <strong>f</strong>, in other words this is the inital &ldquo;carry&rdquo;.</li>
 <li><strong>xs</strong>: Again, this is an array that will be passed to the function <strong>f</strong> during each iteration, this is used for some external force, like the control or action in a reinforcement learning problem.</li>
 <li><strong>length</strong>: The number of iterations that will be run.</li>
 </ol>
@@ -310,7 +314,9 @@
 </span></span><span style="display:flex;"><span>    carry, y <span style="color:#f92672">=</span> f(carry, x)
 </span></span><span style="display:flex;"><span>    ys<span style="color:#f92672">.</span>append(y)
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> carry, np<span style="color:#f92672">.</span>stack(ys)
-</span></span></code></pre></div><p>First off, we can see what the specific signature of the function <strong>f</strong> is. It is a function that takes in carry in its first argument. This is why I used carry to mean coordinates earlier, and it also takes in an <strong>x</strong> from the <strong>xs</strong>. In the loop, we can see that carry is passed again to the function, and the other output of the function is appended to a list, <strong>y</strong>, which is then stacked and returned after execution. Thus, <strong>f</strong> must take two arguments, and return two values. The first will be the coordinates to carry to the step step, and if we make the second the coordinates as well, we will get the coordinates stacked in the second position on the return of <em>scan</em>. The stacked history of the coordinates is just the trajectory the initial conditions have taken. Let us adjust our stepper to confirm to what is needed for <strong>f</strong> and adjust the rollout to use <em>scan</em>.</p>
+</span></span></code></pre></div><p>First off, we can see what the specific signature of the function <strong>f</strong> is. It is a function that takes in carry in its first argument. This is why I used carry to mean coordinates earlier, and it also takes in an <strong>x</strong> from the <strong>xs</strong>. <strong>f</strong> then passes back the new carry, as well as <strong>y</strong> which then gets appended to an array, and returned as a stack. To translate this into the scernario we care about. The &ldquo;carry&rdquo; is returned but the function, then needed an input - in that way it behaves as coorindates do in the Numpy implementation. <strong>ys</strong> are not really considered during the loop but they store data and are returned at the end, in that way they behave like a trajectory. If we were to return coordinates in the first and second position, the information would carry from loop to loop <strong>and</strong> we would compute the trajectory,</p>
+<p><strong>f</strong> takes in a second argument which, as I mentioned, is related to some external input or force, we will not be needing that in this scernatio.</p>
+<p>Let us refactor the Numpy implementation. The main change to the code will be rollout function. Instead of rollout being a function, we will make it a function transformatio, ie. it will return a function, this is just so that we do not need to handle the two inputs and two outputs that the scan function needs. We will just wrap it in a transoformation and call the transformed rollout.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> jax 
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">rollout_scan</span>(stepper):
@@ -327,11 +333,12 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> rollout_fn
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">%</span>timeit rollout_scan(stepper_jnp)(init_coords, length)<span style="color:#f92672">.</span>block_until_ready()
-</span></span></code></pre></div><pre><code>56.2 ms ± 1.58 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)
+</span></span></code></pre></div><pre><code>55.1 ms ± 1.64 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)
 </code></pre>
-<p><img src="output_9_0.png" alt="png"></p>
-<p>Already, over such a small final time we can see that the rollout_scan has halved the execution time, while still, qualitatively, we still have the same butterfly shape. Let now comapre the execution time for our <em>scan</em> implementation, comapred with the numpy.</p>
-<p><img src="output_12_0.png" alt="png"></p>
+<p><img src="output_8_0.png" alt="png"></p>
+<p>We can see that qualitatively, the Lorenz plots are produced are the same. I say qualitatively sice we can see that there are differences, like the <strong>scan</strong> plot has a couple isolated paths on the outside of the butterfly. This difference is due to the fact that JAX uses single precision and Numpy uses double precision by default. Since we know this is a chaotic system, a simple implementation detail like this will have large impacts on the exact trajectory.</p>
+<p>In terms of performance, we see that this transformation and implementation with <em>scan</em> has beaten even the Numpy implementation over this small time horizon. Next, we can compare the two implementations over longer integration times.</p>
+<p><img src="output_11_0.png" alt="png"></p>
 <p>Initially, we see that the numply implementation is actually faster than the scan. But as soon as the length grows, the numpy implementation grows linearly (it loops exponential but that is just because the x-axis is the logorithm), and the jax implementation is almost constant which is just remarkable, this is until \(10^5\) iterations. We see the scan implementation then start to increase from \(10^5, \ 10^5, 10^7\) similarly to how Numpy grew 2 orders of magnitude earlier. Meaning that the scan implmenttion is one hundred times faster than the numpy. This speedup is not even considering the implementation with specialised preocessing units, this speedup is on a vanilla CPU.</p>
 <p>The main question is how? How can JAX do this?</p>
 <p>To answer this, lets consider why JAX was so slow in a normal loop. At a low level, JAX converts linear algebra operations into <a href="https://openxla.org/xla">XLA</a> operations. A normal python loop will be unenrolled and each operation in an interation will be a node on that graph. Naturally, this will not be very efficient since the the construction and execution of this graph can be slow is the graph is too large. The <em>scan</em> function converts the code into a singe XLA while operations which means the computation can be run incredibly fast on your processing unit.</p>
