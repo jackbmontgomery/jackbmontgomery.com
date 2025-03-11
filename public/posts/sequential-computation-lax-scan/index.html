@@ -344,6 +344,9 @@
 <p>To answer this, lets consider why JAX was so slow in a normal loop. At a low level, JAX converts linear algebra operations into <a href="https://openxla.org/xla">XLA</a> operations. A normal python loop will be unenrolled and each operation in an interation will be a node on that graph. Naturally, this will not be very efficient since the the construction and execution of this graph can be slow is the graph is too large. The <em>scan</em> function converts the code into a singe XLA while operations which means the computation can be run incredibly fast on your processing unit.</p>
 <h2 id="conclusion">Conclusion</h2>
 <p>While it is obvious that this <em>scan</em> functional is not replacing loops, we may still need the indexing and small loops may be faster than <em>scan</em>. It is incredible how much faster some computations can be when they do confirm to the correct signature and situation that is required. This is just a taste of what JAX can do, even what the <em>scan</em> functional can do. What we will discuss in another post is how we can use both scan and <a href="https://docs.jax.dev/en/latest/_autosummary/jax.vmap.html">jax.vmap</a> to create an incredibly fast routine to compute the maximal characteristic Lyapunov exponent in another chaotic system.</p>
+<h2 id="references">References</h2>
+<p><a href="https://www.youtube.com/watch?v=NlQ1N3W3Wms">JAX.lax.scan tutorial (for autoregressive rollout)</a></p>
+<p><a href="https://www.youtube.com/watch?v=zRMBIkpcuu0">Largest Lyapunov Exponent using Autodiff in JAX/Python</a></p>
 
         
     </div>
@@ -365,6 +368,7 @@
     <li><a href="#solution-with-numpy-and-jnp">Solution with Numpy and JNP</a></li>
     <li><a href="#using-scan">Using <em>scan</em></a></li>
     <li><a href="#conclusion">Conclusion</a></li>
+    <li><a href="#references">References</a></li>
   </ul>
 </nav>
     </nav>

@@ -6,7 +6,7 @@
     <description>Recent content on Jack Montgomery</description>
     <generator>Hugo</generator>
     <language>en</language>
-    <lastBuildDate>Thu, 27 Feb 2025 07:09:25 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 27 Feb 2025 07:51:42 +0000</lastBuildDate>
     <atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Sequential Computation with jax.lax.scan</title>
@@ -27,7 +27,7 @@
       <link>http://localhost:1313/index-about/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/index-about/</guid>
-      <description>&lt;h1 id=&#34;hello-there&#34;&gt;Hello There&lt;/h1&gt;&#xA;&lt;p&gt;I&amp;rsquo;m a mathematics enthusiast with a strong interest in applied mathematics, particularly in the areas of active inference, machine learning, and statistical modeling. My work focuses on exploring the intersection of theoretical concepts and real-world applications, from predictive coding and reinforcement learning to function approximation and data analysis. Currently, I am pursuing an Honours degree in Mathematics at the University of Cape Town and planning to further my studies with a Master&amp;rsquo;s in Applied Mathematics in the UK. In addition to my academic pursuits, I enjoy developing software solutions that bridge the gap between theory and practice, leveraging technologies like PyTorch, FastAPI, and Vue.js. Here, you&amp;rsquo;ll find insights into my projects, research, and ongoing explorations in the fascinating world of mathematical modeling and artificial intelligence.&lt;/p&gt;</description>
+      <description>&lt;p&gt;I am a student studying applied mathematics with professional backrgound in software engineering and data science. I have a wide range of academic interests including, but not limited to, reinforcement learning, dynamical systems, chaos theory, active inference. This website is a collection of posts I have written on topics I find interesting. The posts are tutorial-like and you should be able to replicate any results by copying code blocks or downloading the notebooks. Please reach out if you have any oppotunities or would like to chat about anything academic or professional.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

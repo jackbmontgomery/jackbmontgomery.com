@@ -19,6 +19,7 @@ title = "Jack Montgomery"
     avatarUrl = "/images/profile.webp"
     avatarAltText = "avatar"
     avatarSize = "size-m"
+    showPostsOnHomePage = "recent"
 
     newPage = true
 
