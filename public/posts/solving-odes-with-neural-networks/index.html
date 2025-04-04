@@ -118,6 +118,10 @@
                 <a href="http://localhost:1313/pdfs/jack_montgomery_cv.pdf" aria-label="" target="_blank"><span data-feather='file-text' ></span> CV </a>
             </div>
             
+            <div class="nav-link">
+                <a href="http://localhost:1313/pdfs/uct_transcript.pdf" aria-label="" target="_blank"><span data-feather='clipboard' ></span> UCT Transcript </a>
+            </div>
+            
 
             <div class="nav-link" id="hamburger-menu-toggle">
                 <span class="sr-only hamburger-menu-toggle-screen-reader-target">menu</span>
@@ -143,6 +147,10 @@
                 
                 <li class="nav-item">
                     <a href="http://localhost:1313/pdfs/jack_montgomery_cv.pdf" target="_blank"><span data-feather='file-text' ></span> CV </a>
+                </li>
+                
+                <li class="nav-item">
+                    <a href="http://localhost:1313/pdfs/uct_transcript.pdf" target="_blank"><span data-feather='clipboard' ></span> UCT Transcript </a>
                 </li>
                 
             </ul>
@@ -375,20 +383,20 @@ $$<p>with the initial condition \( y(0) = 1 \).</p>
 <h2 id="using-a-physical-loss-in-the-neural-network">Using a Physical Loss in the Neural Network</h2>
 <p>So far, we have trained a neural network using data generated from the solution to the ODE, allowing it to approximate the underlying function. While this works, it presents a fundamental chicken-and-egg problem: we need data from the solution in order to approximate the solution. Although real-world data from physical processes is available in some cases, our goal is to solve the ODE without relying on data, instead using the constraints of the equation itself.</p>
 <p>The given ODE is:</p>
-$$  
-\frac{dy}{dt} + 0.1y - \sin\left(\frac{\pi t}{2}\right) = 0  
+$$
+\frac{dy}{dt} + 0.1y - \sin\left(\frac{\pi t}{2}\right) = 0
 $$<p>We can incorporate this constraint into training by treating the first-order derivative as a form of regularization. Specifically, we want to avoid updating the neural network’s parameters in a way that causes</p>
-$$  
-\mathcal{F} = \frac{dy}{dt} + 0.1y - \sin\left(\frac{\pi t}{2}\right)  
+$$
+\mathcal{F} = \frac{dy}{dt} + 0.1y - \sin\left(\frac{\pi t}{2}\right)
 $$<p>to deviate significantly from zero. This requires computing derivatives at specific points in the training process. These points are known as <strong>collocation points</strong>.</p>
 <h3 id="collocation-points-vs-training-points">Collocation Points vs. Training Points</h3>
 <p>A <strong>training point</strong> is an instance derived from the function we aim to approximate. In contrast, a <strong>collocation point</strong> is simply a time value where we evaluate \(\mathcal{F}\).</p>
 <p>We now define a loss function that combines both standard training loss and the loss at collocation points:</p>
-$$  
-L(\theta) = \omega_{\text{data}} L_{\text{data}}(\theta) + w_{\mathcal{F}} L_{\mathcal{F}}(\theta)  
+$$
+L(\theta) = \omega_{\text{data}} L_{\text{data}}(\theta) + w_{\mathcal{F}} L_{\mathcal{F}}(\theta)
 $$<p>where</p>
-$$  
-L_{\mathcal{F}}(\theta) = \left\| \frac{dy_\theta}{dt} + 0.1y_\theta - \sin\left(\frac{\pi t}{2}\right) \right\|.  
+$$
+L_{\mathcal{F}}(\theta) = \left\| \frac{dy_\theta}{dt} + 0.1y_\theta - \sin\left(\frac{\pi t}{2}\right) \right\|.
 $$<details class="details-container">
     <summary class="details-summary">
         Code

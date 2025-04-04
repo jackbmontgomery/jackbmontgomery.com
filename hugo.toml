@@ -61,3 +61,11 @@ title = "Jack Montgomery"
     weight = 4
     [menu.main.params]
       newPage = true
+
+   [[menu.main]]
+    name = "UCT Transcript"
+    url = "pdfs/uct_transcript.pdf"
+    pre = "<span data-feather='clipboard' ></span>"
+    weight = 4
+    [menu.main.params]
+      newPage = true
