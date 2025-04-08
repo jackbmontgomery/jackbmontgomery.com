@@ -63,7 +63,7 @@ title = "Jack Montgomery"
       newPage = true
 
    [[menu.main]]
-    name = "UCT Transcript"
+    name = "UCT"
     url = "pdfs/uct_transcript.pdf"
     pre = "<span data-feather='clipboard' ></span>"
     weight = 4
