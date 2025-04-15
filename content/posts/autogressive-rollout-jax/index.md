@@ -3,11 +3,11 @@ date: 2025-02-26
 lastmod: 2025-02-27T07:51:42
 showTableOfContents: true
 tags: ["choas", "physics", "jax"]
-title: "Sequential Computation with jax.lax.scan"
+title: "Autoregressive rollout in jax"
 type: "post"
 ---
 
-# Sequential Computation with jax.lax.scan
+# Autoregressive rollout in jax
 
 ## Introduction
 
