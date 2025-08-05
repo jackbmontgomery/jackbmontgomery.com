@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        :root {
+            --accent-color: {
+                    {
+                    .Site.Params.AccentColor | default "#FF4D4D"
+                }
+            }
+
+            ;
+
+            --font-size: {
+                    {
+                    .Site.Params.FontSize | default "17.5px"
+                }
+            }
+
+            ;
+        }
+    </style>
+
+    
+    
+    
+    
+    
+    
+
+    
+    <title>Visualising Chaos in the 2D Standard Map with the Lyapunov Exponent</title>
+    <meta name="description" content="Using the Lyapunov Exponent is visualise and measure choas in the 2D Standard map In my fourth year at the University of Cape Town I took a course in Chaos …">
+    <meta name="keywords" content='choas, physics, jax'>
+
+    <meta property="og:url" content="http://localhost:1313/posts/lyapunov-exponent-2d-map/">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Visualising Chaos in the 2D Standard Map with the Lyapunov Exponent">
+    <meta property="og:description" content="Using the Lyapunov Exponent is visualise and measure choas in the 2D Standard map In my fourth year at the University of Cape Town I took a course in Chaos …">
+    <meta property="og:image" content="http://localhost:1313/images/profile.webp">
+    <meta property="og:image:secure_url" content="http://localhost:1313/images/profile.webp">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Visualising Chaos in the 2D Standard Map with the Lyapunov Exponent">
+    <meta name="twitter:description" content="Using the Lyapunov Exponent is visualise and measure choas in the 2D Standard map In my fourth year at the University of Cape Town I took a course in Chaos …">
+    <meta property="twitter:domain" content="http://localhost:1313/posts/lyapunov-exponent-2d-map/">
+    <meta property="twitter:url" content="http://localhost:1313/posts/lyapunov-exponent-2d-map/">
+    <meta name="twitter:image" content="http://localhost:1313/images/profile.webp">
+
+    
+    <link rel="canonical" href="http://localhost:1313/posts/lyapunov-exponent-2d-map/">
+
+    
+    <link rel="stylesheet" type="text/css" href="/css/normalize.min.css" media="print">
+
+    
+    <link rel="stylesheet" type="text/css" href="/css/main.min.css">
+
+    
+    <link id="dark-theme" rel="stylesheet" href="/css/dark.min.css">
+
+    
+    <script src="/js/bundle.min.c856832346537b787d5a768476f58b2d6d8117e9f2f05b92c2a7cce81afe1cb0.js" integrity="sha256-yFaDI0ZTe3h9WnaEdvWLLW2BF&#43;ny8FuSwqfM6Br&#43;HLA="></script>
+
+    
+    
+
+    
+    
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<script>
+    MathJax = {
+        tex: {
+            displayMath: [['$$', '$$']],
+            inlineMath: [['\\(', '\\)']]
+        }
+    };
+</script>
+    
+</head><body>
+        <script>
+            
+            setThemeByUserPref();
+        </script><header class="header">
+    <nav class="header-nav">
+
+        <div class="nav-title">
+            <a class="nav-brand" href="http://localhost:1313/">Jack Montgomery</a>
+        </div>
+
+        <div class="nav-links">
+
+            <div class="dark-theme-toggle">
+                <span class="sr-only dark-theme-toggle-screen-reader-target">theme</span>
+                <a aria-hidden="true" role="switch">
+                    <span class="theme-toggle-icon" data-feather="moon"></span>
+                </a>
+            </div>
+
+            <span class="nav-icons-divider"></span>
+
+            
+            <div class="nav-link">
+                <a href="http://localhost:1313/" aria-label="" ><span data-feather='home'></span> Home </a>
+            </div>
+            
+            <div class="nav-link">
+                <a href="http://localhost:1313/posts/" aria-label="" ><span data-feather='book'></span> Posts </a>
+            </div>
+            
+            <div class="nav-link">
+                <a href="http://localhost:1313/tags/" aria-label="" ><span data-feather='tag'></span> Tags </a>
+            </div>
+            
+            <div class="nav-link">
+                <a href="http://localhost:1313/pdfs/jack_montgomery_cv.pdf" aria-label="" target="_blank"><span data-feather='file-text' ></span> CV </a>
+            </div>
+            
+            <div class="nav-link">
+                <a href="http://localhost:1313/pdfs/uct_transcript.pdf" aria-label="" target="_blank"><span data-feather='clipboard' ></span> UCT </a>
+            </div>
+            
+
+            <div class="nav-link" id="hamburger-menu-toggle">
+                <span class="sr-only hamburger-menu-toggle-screen-reader-target">menu</span>
+                <a aria-checked="false" aria-labelledby="hamburger-menu-toggle" id="hamburger-menu-toggle-target"
+                    role="switch">
+                    <span data-feather="menu"></span>
+                </a>
+            </div>
+
+            <ul class="nav-hamburger-list visibility-hidden">
+                
+                <li class="nav-item">
+                    <a href="http://localhost:1313/" ><span data-feather='home'></span> Home </a>
+                </li>
+                
+                <li class="nav-item">
+                    <a href="http://localhost:1313/posts/" ><span data-feather='book'></span> Posts </a>
+                </li>
+                
+                <li class="nav-item">
+                    <a href="http://localhost:1313/tags/" ><span data-feather='tag'></span> Tags </a>
+                </li>
+                
+                <li class="nav-item">
+                    <a href="http://localhost:1313/pdfs/jack_montgomery_cv.pdf" target="_blank"><span data-feather='file-text' ></span> CV </a>
+                </li>
+                
+                <li class="nav-item">
+                    <a href="http://localhost:1313/pdfs/uct_transcript.pdf" target="_blank"><span data-feather='clipboard' ></span> UCT </a>
+                </li>
+                
+            </ul>
+        </div>
+    </nav>
+</header><main id="content">
+    <div class="post container">
+    <div class="post-header-section">
+
+        
+
+        
+        
+        
+        
+        
+        
+
+        <p></p>
+
+        
+
+        
+
+        
+        <small role="doc-subtitle"></small>
+        
+
+        
+        <p class="post-date">April 22, 2025
+            
+        </p>
+        
+
+        <ul class="post-tags">
+            
+            
+            <li class="post-tag"><a href="http://localhost:1313/tags/choas">choas</a></li>
+            
+            
+            
+            <li class="post-tag"><a href="http://localhost:1313/tags/physics">physics</a></li>
+            
+            
+            
+            <li class="post-tag"><a href="http://localhost:1313/tags/jax">jax</a></li>
+            
+            
+        </ul>
+    </div>
+
+    <div class="post-content">
+        <h1 id="using-the-lyapunov-exponent-is-visualise-and-measure-choas-in-the-2d-standard-map">Using the Lyapunov Exponent is visualise and measure choas in the 2D Standard map</h1>
+<p>In my fourth year at the University of Cape Town I took a course in Chaos theory. The course had a large computational component which I was very interested in. As the course went on we had more complicated (albeit still not incredibly complicated) simulations to run and my python programs were taking incredibly long to run. I knew faster langauages existed but I did not have the time to learn them in this semester course so I just had a be content with running simulations over night.</p>
+<p>A few months after that I heard of <a href="https://docs.jax.dev/en/latest/index.html">jax</a> and got very curious about how much faster I could get these simulations to run. The answer was a lot faster and I am going to walk thought one of the components from the project that took me hours to run even with parallelising the computation to just a few minutes.</p>
+<p>The project is to measure the global choas of the 2D Standard Map. What is required to measure global chaos is a local chaos measure that we can compute for multiple initial conditions.So the goal of this post is two fold:</p>
+<ol>
+<li>To motivate the use of the Lyapunov exponent as a chaos indicator from its mathematical foundations</li>
+<li>Use <a href="https://docs.jax.dev/en/latest/index.html">jax</a> to efficiently compute the exponent for multiple initial conditions to measure and visualise the global chaos in the system.</li>
+</ol>
+<p>If you have not read my previous post on autoregressive rollouts or do not know about <a href="https://docs.jax.dev/en/latest/_autosummary/jax.lax.scan.html">jax.lax.scan</a> I encourage you to read the documentation and read the <a href="https://jackbmontgomery.com/posts/autogressive-rollout-jax">post</a>.</p>
+<h2 id="mathematical-foundations">Mathematical foundations</h2>
+<h3 id="symplectic-maps">Symplectic Maps</h3>
+<p>We will be considering discrete dynamical systems, through everything can be easily extended to the continuous case, that are defined by a symplectic map of the form:</p>
+$$
+\mathbf{x}_{n + 1} = \mathbf{f}\left(\mathbf{x}_n \right)
+$$$$
+\begin{aligned}
+&\mathbf{M}=\mathbf{D} \mathbf{f}(\mathbf{x})=\frac{\partial \mathbf{f}}{\partial \mathbf{x}}=\left[\begin{array}{cccc}
+\frac{\partial f_1}{\partial x_1} & \frac{\partial f_1}{\partial x_2} & \cdots & \frac{\partial f_1}{\partial x_{2 N}} \\
+\frac{\partial f_2}{\partial x_1} & \frac{\partial f_2}{\partial x_2} & \cdots & \frac{\partial f_2}{\partial x_{2 N}} \\
+\vdots & \vdots & & \vdots \\
+\frac{\partial f_{2 N}}{\partial x_1} & \frac{\partial f_{2 N}}{\partial x_2} & \cdots & \frac{\partial f_{2 N}}{\partial x_{2 N}}
+\end{array}\right]
+\end{aligned}
+$$$$
+\begin{aligned}
+&\mathbf{M}^{\mathrm{T}} \cdot \mathbf{J}_{2 N} \cdot \mathbf{M}=\mathbf{J}_{2 N} .
+\end{aligned}
+$$<p>
+This is written with regard to the induced flow: \(\Phi^n: \mathcal{S} \to \mathcal{S}\). Meaning that: \( \mathbf{x_n }= \Phi^n \mathbf{x_0 }= (f)^n (\mathbf{x_0}) \)</p>
+<h3 id="tangent-map">Tangent Map</h3>
+<p>As mentioned, to describe the sensitivity on initial conditions we want to measure how large a small perturbation to the initial conditions makes. These dynamics operate on the tangent space \( \mathcal{T}_{\mathbf{X}}\mathcal{S} \).</p>
+<h2 id="numerical-implementation">Numerical Implementation</h2>
+
+        
+    </div>
+
+    <div class="prev-next">
+        
+    </div>
+
+    
+    
+    
+</div>
+<aside class="post-toc">
+    <nav id="toc">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#mathematical-foundations">Mathematical foundations</a>
+      <ul>
+        <li><a href="#symplectic-maps">Symplectic Maps</a></li>
+        <li><a href="#tangent-map">Tangent Map</a></li>
+      </ul>
+    </li>
+    <li><a href="#numerical-implementation">Numerical Implementation</a></li>
+  </ul>
+</nav>
+    </nav>
+</aside>
+
+
+
+    
+
+        </main><footer class="footer">
+    
+    
+
+    
+
+    
+
+    
+</footer></body>
+</html>
