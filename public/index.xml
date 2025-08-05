@@ -6,15 +6,8 @@
     <description>Recent content on Jack Montgomery</description>
     <generator>Hugo</generator>
     <language>en</language>
-    <lastBuildDate>Tue, 22 Apr 2025 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 27 Feb 2025 07:51:42 +0000</lastBuildDate>
     <atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Visualising Chaos in the 2D Standard Map with the Lyapunov Exponent</title>
-      <link>http://localhost:1313/posts/lyapunov-exponent-2d-map/</link>
-      <pubDate>Tue, 22 Apr 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/posts/lyapunov-exponent-2d-map/</guid>
-      <description>&lt;h1 id=&#34;using-the-lyapunov-exponent-is-visualise-and-measure-choas-in-the-2d-standard-map&#34;&gt;Using the Lyapunov Exponent is visualise and measure choas in the 2D Standard map&lt;/h1&gt;&#xA;&lt;p&gt;In my fourth year at the University of Cape Town I took a course in Chaos theory. The course had a large computational component which I was very interested in. As the course went on we had more complicated (albeit still not incredibly complicated) simulations to run and my python programs were taking incredibly long to run. I knew faster langauages existed but I did not have the time to learn them in this semester course so I just had a be content with running simulations over night.&lt;/p&gt;</description>
-    </item>
     <item>
       <title>Autoregressive rollout in jax</title>
       <link>http://localhost:1313/posts/autogressive-rollout-jax/</link>

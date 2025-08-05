@@ -62,7 +62,7 @@
     <link id="dark-theme" rel="stylesheet" href="/css/dark.min.css">
 
     
-    <script src="/js/bundle.min.c856832346537b787d5a768476f58b2d6d8117e9f2f05b92c2a7cce81afe1cb0.js" integrity="sha256-yFaDI0ZTe3h9WnaEdvWLLW2BF&#43;ny8FuSwqfM6Br&#43;HLA="></script>
+    <script src="/js/bundle.min.3f366300ebe6612876681a6e54ba05115d8444a078f651ca020dde154e13cc55.js" integrity="sha256-PzZjAOvmYSh2aBpuVLoFEV2ERKB49lHKAg3eFU4TzFU="></script>
 
     
     
@@ -118,10 +118,6 @@
                 <a href="http://localhost:1313/pdfs/jack_montgomery_cv.pdf" aria-label="" target="_blank"><span data-feather='file-text' ></span> CV </a>
             </div>
             
-            <div class="nav-link">
-                <a href="http://localhost:1313/pdfs/uct_transcript.pdf" aria-label="" target="_blank"><span data-feather='clipboard' ></span> UCT </a>
-            </div>
-            
 
             <div class="nav-link" id="hamburger-menu-toggle">
                 <span class="sr-only hamburger-menu-toggle-screen-reader-target">menu</span>
@@ -147,10 +143,6 @@
                 
                 <li class="nav-item">
                     <a href="http://localhost:1313/pdfs/jack_montgomery_cv.pdf" target="_blank"><span data-feather='file-text' ></span> CV </a>
-                </li>
-                
-                <li class="nav-item">
-                    <a href="http://localhost:1313/pdfs/uct_transcript.pdf" target="_blank"><span data-feather='clipboard' ></span> UCT </a>
                 </li>
                 
             </ul>
@@ -207,20 +199,20 @@
 <h2 id="introduction">Introduction</h2>
 <p>Python has a very simple and intuitive syntax that makes the developing time of a project, generally, short. The issue with python is when we start to consider the executive time for projects, especially intentive simulation and modelling jobs. In these scenarios julia or Matlab could be better suited to the task.</p>
 <p>One of the reasons python is slow in these simulation and physics environments is that they requiure extensive control flow. There is lots of looping and conditions which python is not very good at. We will be using <a href="https://docs.jax.dev/en/latest/index.html">JAX</a> in the post today to try an cirucmvent these control flow bottlenecks in python programs. JAX is an open source python package made by Google, provides simple API&rsquo;s and functional transformations to make python more performant while keeping the simple syntax. Specifically, what we will be looking into today is the <a href="https://docs.jax.dev/en/latest/_autosummary/jax.lax.scan.html">jax.lax.scan</a>, which I will call <em>scan</em> for short.</p>
-<h2 id="what-is-_scan_-good-for">What is <em>scan</em> good for?</h2>
+<h2 id="what-is-scan-good-for">What is <em>scan</em> good for?</h2>
 <p>In the simulation of dynamical systems, for example, we are confronted with the situation of moving the coordinates through time using the rules given by some differential or difference equations. For reasons we will see late, I will call this carry. We are looking to carry initial coordinates through time in order to compute the <strong>trajectory</strong>. This is type of problem that <em>scan</em> is very well suited for.</p>
 <h2 id="solution-with-numpy-and-jnp">Solution with Numpy and JNP</h2>
 <p>But before we discuss the usage of <em>scan</em>, let us discuss a simple solution to this problem. We can define some stepper, a function that takes in coordinates at the current timestep and returns the coordinates at the next timestep. We could then define a variable called trajectory and append to this at each iteration in the loop. Finally, we just set the next coordinates that have been returned from the stepper as the coordinates. It would look something like this for the Lorenz system:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> numpy <span style="color:#66d9ef">as</span> np
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">LorenzRK4StepperNP</span>:
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> __init__(self, sigma<span style="color:#f92672">=</span><span style="color:#ae81ff">10.</span>, rho<span style="color:#f92672">=</span><span style="color:#ae81ff">28.</span>, beta<span style="color:#f92672">=</span><span style="color:#ae81ff">8</span><span style="color:#f92672">/</span><span style="color:#ae81ff">3</span>, tau<span style="color:#f92672">=</span><span style="color:#ae81ff">0.01</span>):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">__init__</span>(self, sigma<span style="color:#f92672">=</span><span style="color:#ae81ff">10.</span>, rho<span style="color:#f92672">=</span><span style="color:#ae81ff">28.</span>, beta<span style="color:#f92672">=</span><span style="color:#ae81ff">8</span><span style="color:#f92672">/</span><span style="color:#ae81ff">3</span>, tau<span style="color:#f92672">=</span><span style="color:#ae81ff">0.01</span>):
 </span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>sigma <span style="color:#f92672">=</span> sigma
 </span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>rho <span style="color:#f92672">=</span> rho
 </span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>beta <span style="color:#f92672">=</span> beta
 </span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>tau <span style="color:#f92672">=</span> tau
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> __call__(self, coords):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">__call__</span>(self, coords):
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">lorenz_rhs</span>(coords, sigma<span style="color:#f92672">=</span>self<span style="color:#f92672">.</span>sigma, rho<span style="color:#f92672">=</span>self<span style="color:#f92672">.</span>rho, beta<span style="color:#f92672">=</span>self<span style="color:#f92672">.</span>beta):
 </span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> np<span style="color:#f92672">.</span>array(
@@ -270,13 +262,13 @@
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> jax.numpy <span style="color:#66d9ef">as</span> jnp
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">LorenzRK4StepperJNP</span>:
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> __init__(self, sigma<span style="color:#f92672">=</span><span style="color:#ae81ff">10.0</span>, rho<span style="color:#f92672">=</span><span style="color:#ae81ff">28.0</span>, beta<span style="color:#f92672">=</span><span style="color:#ae81ff">8</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">3</span>, tau<span style="color:#f92672">=</span><span style="color:#ae81ff">0.01</span>):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">__init__</span>(self, sigma<span style="color:#f92672">=</span><span style="color:#ae81ff">10.0</span>, rho<span style="color:#f92672">=</span><span style="color:#ae81ff">28.0</span>, beta<span style="color:#f92672">=</span><span style="color:#ae81ff">8</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">3</span>, tau<span style="color:#f92672">=</span><span style="color:#ae81ff">0.01</span>):
 </span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>sigma <span style="color:#f92672">=</span> sigma
 </span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>rho <span style="color:#f92672">=</span> rho
 </span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>beta <span style="color:#f92672">=</span> beta
 </span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>tau <span style="color:#f92672">=</span> tau
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> __call__(self, coords):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">__call__</span>(self, coords):
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">lorenz_rhs</span>(coords, sigma<span style="color:#f92672">=</span>self<span style="color:#f92672">.</span>sigma, rho<span style="color:#f92672">=</span>self<span style="color:#f92672">.</span>rho, beta<span style="color:#f92672">=</span>self<span style="color:#f92672">.</span>beta):
 </span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> jnp<span style="color:#f92672">.</span>array(
 </span></span><span style="display:flex;"><span>                [
@@ -304,7 +296,7 @@
 </span></span></code></pre></div><pre><code>20.5 s ± 284 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
 </code></pre>
 <p>Suddenly, by just replacing <em>np</em> with <em>jnp</em> the average computation time of the trajectoy went from ~90ms to 20s. For reasons that will be discussed later, JAX does not perform very well in normal python loops. There are extremely fast implementations of looping logic that JAX offers, one of which is the <em>scan</em> functional.</p>
-<h2 id="using-_scan_">Using <em>scan</em></h2>
+<h2 id="using-scan">Using <em>scan</em></h2>
 <p><em>scan</em> takes in four main arguments that pertain to us.</p>
 <ol>
 <li><strong>f</strong>: This is a function that is used to move the system, kind of like the stepper method called in the body of the loop, however this method needs to have a very specific signature which we will discuss in a little bit.</li>
@@ -372,9 +364,9 @@
         <nav id="TableOfContents">
   <ul>
     <li><a href="#introduction">Introduction</a></li>
-    <li><a href="#what-is-_scan_-good-for">What is <em>scan</em> good for?</a></li>
+    <li><a href="#what-is-scan-good-for">What is <em>scan</em> good for?</a></li>
     <li><a href="#solution-with-numpy-and-jnp">Solution with Numpy and JNP</a></li>
-    <li><a href="#using-_scan_">Using <em>scan</em></a></li>
+    <li><a href="#using-scan">Using <em>scan</em></a></li>
     <li><a href="#conclusion">Conclusion</a></li>
     <li><a href="#references">References</a></li>
   </ul>
