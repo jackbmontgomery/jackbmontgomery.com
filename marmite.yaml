@@ -28,3 +28,5 @@ build_sitemap: true
 publish_urls_json: true
 extra:
   colorscheme: clean
+  colormode: auto
+  colormodetoggle: true
