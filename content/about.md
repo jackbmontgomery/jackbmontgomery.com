@@ -7,8 +7,7 @@ from sensor data, as part of the [Mi-Hy] project.
 More broadly, I am interested in integrating scientific knowledge into machine learning systems –
 whether through the loss, the inductive biases, or simply letting models handle heterogeneous data.
 
-Code lives on my [GitHub](https://github.com/jackbmontgomery); I'm also on
-[LinkedIn](https://www.linkedin.com/in/jack-b-montgomery/).
+Code lives on my [GitHub]; I'm also on [LinkedIn](https://www.linkedin.com/in/jack-b-montgomery/).
 
 ## Background
 
