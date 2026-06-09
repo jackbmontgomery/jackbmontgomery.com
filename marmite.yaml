@@ -1,0 +1,30 @@
+name: Jack Montgomery
+tagline: Scientific machine learning
+url: https://jackbmontgomery.com
+https: null
+language: 'en'
+default_author: ''
+authors_title: Authors
+enable_search: false
+search_show_matches: false
+search_match_count: 0
+enable_related_content: false
+search_title: ''
+content_path: content
+site_path: ''
+static_path: static
+media_path: media
+default_date_format: '%b %e, %Y'
+menu:
+- - Home
+  - 
+- - About 
+  - about.html
+- - Tags
+  - tags.html
+enable_shortcodes: true
+shortcode_pattern: null
+build_sitemap: true
+publish_urls_json: true
+extra:
+  colorscheme: clean
