@@ -5,11 +5,11 @@ Personal website and blog. Built with [Marmite](https://marmite.blog), deployed 
 
 ## Stack
 
-| Tool                            | Role                                          |
-| ------------------------------- | --------------------------------------------- |
-| [Marmite](https://marmite.blog) | Static site generator — Markdown in, HTML out |
-| Cloudflare Pages                | Hosting                                       |
-| GitHub Actions                  | CI/CD — builds and deploys on push to `main`  |
+| Tool                            | Role                  |
+| ------------------------------- | --------------------- |
+| [Marmite](https://marmite.blog) | Static site generator |
+| Cloudflare Pages                | Hosting               |
+| GitHub Actions                  | CI/CD                 |
 
 ## Project Structure
 
@@ -33,7 +33,7 @@ curl -sS https://marmite.blog/install.sh | sh
 Build and serve:
 
 ```bash
-marmite . --serve
+marmite . --serve -w
 ```
 
 ## Writing
