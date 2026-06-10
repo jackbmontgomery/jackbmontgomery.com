@@ -5,7 +5,7 @@ I am a PhD student at the Artificial Intelligence Research Unit at the Universit
 from sensor data, as part of the [Mi-Hy] project.
 
 More broadly, I am interested in integrating scientific knowledge into machine learning systems –
-whether through the loss, the inductive biases, or simply letting models handle heterogeneous data.
+whether through the loss, the inductive biases, or letting models handle heterogeneous data.
 
 Code lives on my [GitHub]; I'm also on [LinkedIn].
 
