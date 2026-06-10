@@ -1,1 +1,1 @@
-> Ideas, observations, and the occasional tangent — some technical, some personal.
+> Ideas, observations, and tangents — some technical, some personal.
